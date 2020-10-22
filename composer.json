@@ -1,8 +1,8 @@
 {
-  "name": "mimmi20/template",
+  "name": "mimmi20/mezzio-generic-authorization",
   "type": "library",
-  "description": "Provides a GitHub repository template for a PHP library, using GitHub actions.",
-  "homepage": "https://github.com/mimmi20/template",
+  "description": "Provides a Authorization middleware for Mezzio and PSR-7 applications.",
+  "homepage": "https://github.com/mimmi20/mezzio-generic-authorization",
   "license": "MIT",
   "authors": [
     {
@@ -11,12 +11,24 @@
       "role": "Developer"
     }
   ],
+  "keywords": [
+    "mezzio",
+    "authorization",
+    "middleware",
+    "psr-7",
+    "psr-15"
+  ],
   "require": {
-    "php": "^7.1.3 || ^8.0.0"
+    "php": "^7.1.3 || ^8.0.0",
+    "laminas/laminas-log": "^2.12.0",
+    "mezzio/mezzio-authentication": "^1.0.0",
+    "psr/container": "^1.0.0",
+    "psr/http-message": "^1.0.1",
+    "psr/http-server-middleware": "^1.0.0"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "~2.8.0",
-    "infection/infection": "~0.13.6 || ~0.16.4",
+    "infection/infection": "~0.13.6 || ~0.18",
     "mimmi20/coding-standard": "~1.0.4",
     "pepakriz/phpstan-exception-rules": "~0.11.1",
     "phpstan/extension-installer": "~1.0.5",
@@ -24,7 +36,24 @@
     "phpstan/phpstan-beberlei-assert": "~0.12.3",
     "phpstan/phpstan-deprecation-rules": "~0.12.5",
     "phpstan/phpstan-phpunit": "~0.12.16",
-    "phpunit/phpunit": "~7.5.20 || ~8.5.8 || ~9.3.5"
+    "phpunit/phpunit": "~7.5.20 || ~8.5.8 || ~9.4.2"
+  },
+  "conflict": {
+    "container-interop/container-interop": "<1.2.0"
+  },
+  "suggest": {
+    "mezzio/mezzio-generic-authorization-acl": "^1.0; provides a laminas-permissions-acl-backed adapter",
+    "mezzio/mezzio-generic-authorization-rbac": "^1.0; provides a laminas-permissions-rbac-backed adapter"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mezzio\\GenericAuthorization\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MezzioTest\\GenericAuthorization\\": "tests/"
+    }
   },
   "config": {
     "platform": {
@@ -34,7 +63,12 @@
     "sort-packages": true
   },
   "support": {
-    "issues": "https://github.com/mimmi20/template/issues",
-    "source": "https://github.com/mimmi20/template"
+    "issues": "https://github.com/mimmi20/mezzio-generic-authorization/issues",
+    "source": "https://github.com/mimmi20/mezzio-generic-authorization"
+  },
+  "extra": {
+    "laminas": {
+      "config-provider": "Mezzio\\GenericAuthorization\\ConfigProvider"
+    }
   }
 }
