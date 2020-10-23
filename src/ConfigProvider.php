@@ -1,31 +1,40 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization;
 
-class ConfigProvider
+final class ConfigProvider
 {
     /**
      * Return the configuration array.
+     *
+     * @return array[]
      */
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return [
-            'dependencies'  => $this->getDependencies(),
+            'dependencies' => $this->getDependencies(),
             'authorization' => $this->getAuthorizationConfig(),
         ];
     }
 
     /**
      * Returns the configuration for the AuthorizationInterface adapter
+     *
+     * @return array
      */
-    public function getAuthorizationConfig() : array
+    public function getAuthorizationConfig(): array
     {
         return [
-            /**
+            /*
              * Example using LaminasAcl:
              *
              * 'roles' => [
@@ -60,8 +69,10 @@ class ConfigProvider
 
     /**
      * Returns the container dependencies
+     *
+     * @return array
      */
-    public function getDependencies() : array
+    public function getDependencies(): array
     {
         return [
             'factories' => [

@@ -1,30 +1,32 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization;
 
 use Generator;
 use Mezzio\GenericAuthorization\Exception\ExceptionInterface;
 use PHPUnit\Framework\TestCase;
 
-use function basename;
-use function glob;
-use function is_a;
-use function strrpos;
-use function substr;
-
-class ExceptionTest extends TestCase
+final class ExceptionTest extends TestCase
 {
-    public function exception() : Generator
+    /**
+     * @return \Generator
+     */
+    public function exception(): Generator
     {
-        $namespace = substr(ExceptionInterface::class, 0, strrpos(ExceptionInterface::class, '\\') + 1);
+        $namespace = mb_substr(ExceptionInterface::class, 0, mb_strrpos(ExceptionInterface::class, '\\') + 1);
 
         $exceptions = glob(__DIR__ . '/../src/Exception/*.php');
         foreach ($exceptions as $exception) {
-            $class = substr(basename($exception), 0, -4);
+            $class = mb_substr(basename($exception), 0, -4);
 
             yield $class => [$namespace . $class];
         }
@@ -32,8 +34,12 @@ class ExceptionTest extends TestCase
 
     /**
      * @dataProvider exception
+     *
+     * @param string $exception
+     *
+     * @return void
      */
-    public function testExceptionIsInstanceOfExceptionInterface(string $exception) : void
+    public function testExceptionIsInstanceOfExceptionInterface(string $exception): void
     {
         self::assertContains('Exception', $exception);
         self::assertTrue(is_a($exception, ExceptionInterface::class, true));

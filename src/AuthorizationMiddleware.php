@@ -1,9 +1,14 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization;
 
 use Mezzio\Authentication\UserInterface;
@@ -11,43 +16,39 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Laminas\Log\Logger;
 
-class AuthorizationMiddleware implements MiddlewareInterface
+final class AuthorizationMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var AuthorizationInterface
-     */
+    /** @var AuthorizationInterface */
     private $authorization;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     private $responseFactory;
 
     /**
-     * @var Logger;
+     * @param \Mezzio\GenericAuthorization\AuthorizationInterface $authorization
+     * @param callable                                            $responseFactory
      */
-    private $logger;
-
-    public function __construct(AuthorizationInterface $authorization, Logger $logger, callable $responseFactory)
+    public function __construct(AuthorizationInterface $authorization, callable $responseFactory)
     {
         $this->authorization = $authorization;
-        $this->logger = $logger;
 
         // Ensures type safety of the composed factory
-        $this->responseFactory = function () use ($responseFactory) : ResponseInterface {
+        $this->responseFactory = static function () use ($responseFactory): ResponseInterface {
             return $responseFactory();
         };
     }
 
     /**
-     * {@inheritDoc}
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $request->getAttribute(UserInterface::class, false);
-        if (! $user instanceof UserInterface) {
+        if (!$user instanceof UserInterface) {
             return ($this->responseFactory)()->withStatus(401);
         }
 
@@ -74,6 +75,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
                 return $handler->handle($request);
             }
         }
+
         return ($this->responseFactory)()->withStatus(403);
     }
 }

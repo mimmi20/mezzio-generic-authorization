@@ -1,44 +1,58 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization;
 
 use Mezzio\GenericAuthorization\AuthorizationMiddleware;
 use Mezzio\GenericAuthorization\ConfigProvider;
 use PHPUnit\Framework\TestCase;
 
-class ConfigProviderTest extends TestCase
+final class ConfigProviderTest extends TestCase
 {
     /** @var ConfigProvider */
     private $provider;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         $this->provider = new ConfigProvider();
     }
 
-    public function testProviderDefinesExpectedFactoryServices()
+    /**
+     * @return void
+     */
+    public function testProviderDefinesExpectedFactoryServices(): void
     {
-        $config = $this->provider->getDependencies();
+        $config    = $this->provider->getDependencies();
         $factories = $config['factories'];
 
-        $this->assertArrayHasKey(AuthorizationMiddleware::class, $factories);
+        self::assertArrayHasKey(AuthorizationMiddleware::class, $factories);
     }
 
-    public function testInvocationReturnsArrayWithDependencies()
+    /**
+     * @return void
+     */
+    public function testInvocationReturnsArrayWithDependencies(): void
     {
         $config = ($this->provider)();
 
-        $this->assertInternalType('array', $config);
-        $this->assertArrayHasKey('authorization', $config);
-        $this->assertInternalType('array', $config['authorization']);
+        self::assertIsArray($config);
+        self::assertArrayHasKey('authorization', $config);
+        self::assertIsArray($config['authorization']);
 
-        $this->assertArrayHasKey('dependencies', $config);
-        $this->assertInternalType('array', $config['dependencies']);
-        $this->assertArrayHasKey('aliases', $config['dependencies']);
-        $this->assertArrayHasKey('factories', $config['dependencies']);
+        self::assertArrayHasKey('dependencies', $config);
+        self::assertIsArray($config['dependencies']);
+        self::assertArrayHasKey('aliases', $config['dependencies']);
+        self::assertArrayHasKey('factories', $config['dependencies']);
     }
 }

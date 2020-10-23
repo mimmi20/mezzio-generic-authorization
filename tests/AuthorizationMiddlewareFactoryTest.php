@@ -1,9 +1,14 @@
 <?php
+/**
+ * This file is part of the mimmi20/mezzio-generic-authorization package.
+ *
+ * Copyright (c) 2020, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
-
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization;
 
 use Mezzio\GenericAuthorization\AuthorizationInterface;
@@ -17,7 +22,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionProperty;
 
-class AuthorizationMiddlewareFactoryTest extends TestCase
+final class AuthorizationMiddlewareFactoryTest extends TestCase
 {
     /** @var ContainerInterface|ObjectProphecy */
     private $container;
@@ -28,19 +33,22 @@ class AuthorizationMiddlewareFactoryTest extends TestCase
     /** @var AuthorizationInterface|ObjectProphecy */
     private $authorization;
 
-    /** @var ResponseInterface|ObjectProphecy */
+    /** @var ObjectProphecy|ResponseInterface */
     private $responsePrototype;
 
     /** @var callable */
     private $responseFactory;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
-        $this->container = $this->prophesize(ContainerInterface::class);
-        $this->factory = new AuthorizationMiddlewareFactory();
-        $this->authorization = $this->prophesize(AuthorizationInterface::class);
+        $this->container         = $this->prophesize(ContainerInterface::class);
+        $this->factory           = new AuthorizationMiddlewareFactory();
+        $this->authorization     = $this->prophesize(AuthorizationInterface::class);
         $this->responsePrototype = $this->prophesize(ResponseInterface::class);
-        $this->responseFactory = function () {
+        $this->responseFactory   = function () {
             return $this->responsePrototype->reveal();
         };
 
@@ -52,7 +60,10 @@ class AuthorizationMiddlewareFactoryTest extends TestCase
             ->willReturn($this->responseFactory);
     }
 
-    public function testFactoryWithoutAuthorization()
+    /**
+     * @return void
+     */
+    public function testFactoryWithoutAuthorization(): void
     {
         $this->container->has(AuthorizationInterface::class)->willReturn(false);
 
@@ -60,20 +71,31 @@ class AuthorizationMiddlewareFactoryTest extends TestCase
         ($this->factory)($this->container->reveal());
     }
 
-    public function testFactory()
+    /**
+     * @return void
+     */
+    public function testFactory(): void
     {
         $this->container->has(AuthorizationInterface::class)->willReturn(true);
         $this->container->has(ResponseInterface::class)->willReturn(true);
 
         $middleware = ($this->factory)($this->container->reveal());
-        $this->assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
         $this->assertResponseFactoryReturns($this->responsePrototype->reveal(), $middleware);
     }
 
+    /**
+     * @param \Psr\Http\Message\ResponseInterface                  $expected
+     * @param \Mezzio\GenericAuthorization\AuthorizationMiddleware $middleware
+     *
+     * @throws \ReflectionException
+     *
+     * @return void
+     */
     public static function assertResponseFactoryReturns(
         ResponseInterface $expected,
         AuthorizationMiddleware $middleware
-    ) : void {
+    ): void {
         $r = new ReflectionProperty($middleware, 'responseFactory');
         $r->setAccessible(true);
         $responseFactory = $r->getValue($middleware);
