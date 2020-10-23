@@ -22,12 +22,14 @@
     "php": "^7.1.3 || ^8.0.0",
     "laminas/laminas-log": "^2.12.0",
     "mezzio/mezzio-authentication": "^1.1.0",
+    "mezzio/mezzio-router": "^3.0.0",
     "psr/container": "^1.0.0",
     "psr/http-message": "^1.0.1",
     "psr/http-server-middleware": "^1.0.1"
   },
   "conflict": {
-    "container-interop/container-interop": "<1.2.0"
+    "container-interop/container-interop": "<1.2.0",
+    "mezzio/mezzio-authorization": "*"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "~2.8.0",

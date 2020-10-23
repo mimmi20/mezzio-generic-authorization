@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -18,6 +19,8 @@ final class AuthorizationMiddlewareFactory
 {
     /**
      * @param \Psr\Container\ContainerInterface $container
+     *
+     * @throws Exception\InvalidConfigException
      *
      * @return \Mezzio\GenericAuthorization\AuthorizationMiddleware
      */
@@ -33,9 +36,19 @@ final class AuthorizationMiddlewareFactory
             );
         }
 
-        return new AuthorizationMiddleware(
-            $container->get(AuthorizationInterface::class),
-            $container->get(ResponseInterface::class)
-        );
+        try {
+            return new AuthorizationMiddleware(
+                $container->get(AuthorizationInterface::class),
+                $container->get(ResponseInterface::class)
+            );
+        } catch (ContainerExceptionInterface $e) {
+            throw new Exception\InvalidConfigException(
+                sprintf(
+                    'Cannot create %s service; could not initialize dependency %s',
+                    AuthorizationMiddleware::class,
+                    AuthorizationInterface::class
+                )
+            );
+        }
     }
 }

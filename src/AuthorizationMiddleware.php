@@ -12,6 +12,7 @@ declare(strict_types = 1);
 namespace Mezzio\GenericAuthorization;
 
 use Mezzio\Authentication\UserInterface;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -42,6 +43,8 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Server\RequestHandlerInterface $handler
+     *
+     * @throws Exception\RuntimeException
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
