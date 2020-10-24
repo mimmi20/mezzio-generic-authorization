@@ -92,6 +92,51 @@ final class AuthorizationMiddlewareTest extends TestCase
      *
      * @return void
      */
+    public function testProcessWithoutUserAttributeExcption(): void
+    {
+        $exception       = new \InvalidArgumentException('test');
+        $authorization   = $this->createMock(AuthorizationInterface::class);
+        $responseFactory = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $responseFactory->expects(self::once())
+            ->method('withStatus')
+            ->with(401)
+            ->willThrowException($exception);
+
+        /** @var AuthorizationInterface $authorization */
+        /** @var ResponseInterface $responseFactory */
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects(self::once())
+            ->method('getAttribute')
+            ->with(UserInterface::class)
+            ->willReturn(null);
+        $handler = $this->createMock(RequestHandlerInterface::class);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('could not set statuscode');
+
+        /* @var ServerRequestInterface $request */
+        /* @var RequestHandlerInterface $handler */
+        $middleware->process(
+            $request,
+            $handler
+        );
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
+     *
+     * @return void
+     */
     public function testProcessWithoutRouteAttribute(): void
     {
         $authorization   = $this->createMock(AuthorizationInterface::class);
@@ -234,6 +279,69 @@ final class AuthorizationMiddlewareTest extends TestCase
         );
 
         self::assertSame($expectedResponse, $response);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
+     *
+     * @return void
+     */
+    public function testProcessRoleNotGrantedException(): void
+    {
+        $exception       = new \InvalidArgumentException('test');
+        $routeName       = 'test';
+        $authorization   = $this->createMock(AuthorizationInterface::class);
+        $responseFactory = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $responseFactory->expects(self::once())
+            ->method('withStatus')
+            ->with(403)
+            ->willThrowException($exception);
+
+        $user = $this->getMockBuilder(UserInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->expects(self::once())
+            ->method('getRoles')
+            ->willReturn([]);
+
+        $routeResult = $this->getMockBuilder(RouteResult::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $routeResult->expects(self::once())
+            ->method('isFailure')
+            ->willReturn(false);
+        $routeResult->expects(self::exactly(2))
+            ->method('getMatchedRouteName')
+            ->willReturn($routeName);
+
+        /** @var AuthorizationInterface $authorization */
+        /** @var ResponseInterface $responseFactory */
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects(self::exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([UserInterface::class], [RouteResult::class])
+            ->willReturnOnConsecutiveCalls($user, $routeResult);
+        $handler = $this->createMock(RequestHandlerInterface::class);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('could not set statuscode');
+
+        /* @var ServerRequestInterface $request */
+        /* @var RequestHandlerInterface $handler */
+        $middleware->process(
+            $request,
+            $handler
+        );
     }
 
     /**

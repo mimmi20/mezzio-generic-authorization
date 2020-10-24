@@ -54,9 +54,10 @@ final class AuthorizationMiddlewareFactory
         } catch (ContainerExceptionInterface $e) {
             throw new Exception\InvalidConfigException(
                 sprintf(
-                    'Cannot create %s service; could not initialize dependency %s',
+                    'Cannot create %s service; could not initialize dependency %s or %s',
                     AuthorizationMiddleware::class,
-                    AuthorizationInterface::class
+                    AuthorizationInterface::class,
+                    ResponseInterface::class
                 )
             );
         }

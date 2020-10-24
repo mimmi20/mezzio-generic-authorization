@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 namespace MezzioTest\GenericAuthorization;
 
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Mezzio\GenericAuthorization\AuthorizationInterface;
 use Mezzio\GenericAuthorization\AuthorizationMiddleware;
 use Mezzio\GenericAuthorization\AuthorizationMiddlewareFactory;
@@ -102,5 +103,34 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
         /** @var ContainerInterface $container */
         $middleware = $factory($container);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     *
+     * @return void
+     */
+    public function testFactoryContainerException(): void
+    {
+        $exception = new ServiceNotCreatedException('test');
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects(self::exactly(2))
+            ->method('has')
+            ->withConsecutive([AuthorizationInterface::class], [ResponseInterface::class])
+            ->willReturnOnConsecutiveCalls(true, true);
+        $container->expects(self::once())
+            ->method('get')
+            ->with(AuthorizationInterface::class)
+            ->willThrowException($exception);
+
+        $factory = new AuthorizationMiddlewareFactory();
+
+        $this->expectException(Exception\InvalidConfigException::class);
+        $this->expectExceptionMessage('Cannot create Mezzio\GenericAuthorization\AuthorizationMiddleware service; could not initialize dependency Mezzio\GenericAuthorization\AuthorizationInterface or Psr\Http\Message\ResponseInterface');
+
+        /* @var ContainerInterface $container */
+        $factory($container);
     }
 }
