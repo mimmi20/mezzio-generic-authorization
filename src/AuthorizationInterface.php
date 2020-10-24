@@ -25,5 +25,5 @@ interface AuthorizationInterface
      *
      * @return bool
      */
-    public function isGranted(string $role, string $resource, ?string $privilege, ?ServerRequestInterface $request = null): bool;
+    public function isGranted(string $role, string $resource, ?string $privilege = null, ?ServerRequestInterface $request = null): bool;
 }
