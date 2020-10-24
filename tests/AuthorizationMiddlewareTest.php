@@ -280,7 +280,7 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->getMock();
         $authorization->expects(self::exactly(2))
             ->method('isGranted')
-            ->withConsecutive([$role1, $routeName, $request], [$role2, $routeName, $request])
+            ->withConsecutive([$role1, $routeName, null, $request], [$role2, $routeName, null, $request])
             ->willReturnOnConsecutiveCalls(false, true);
 
         $expectedResponse = $this->createMock(ResponseInterface::class);

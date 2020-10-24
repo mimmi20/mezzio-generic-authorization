@@ -77,7 +77,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         $routeName = $routeResult->getMatchedRouteName();
 
         foreach ($user->getRoles() as $role) {
-            if ($this->authorization->isGranted($role, $routeName, $request)) {
+            if ($this->authorization->isGranted($role, $routeName, null, $request)) {
                 return $handler->handle($request);
             }
         }
