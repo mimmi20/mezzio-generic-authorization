@@ -23,21 +23,17 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     /** @var AuthorizationInterface */
     private $authorization;
 
-    /** @var callable */
+    /** @var ResponseInterface */
     private $responseFactory;
 
     /**
      * @param \Mezzio\GenericAuthorization\AuthorizationInterface $authorization
-     * @param callable                                            $responseFactory
+     * @param ResponseInterface                                   $responseFactory
      */
-    public function __construct(AuthorizationInterface $authorization, callable $responseFactory)
+    public function __construct(AuthorizationInterface $authorization, ResponseInterface $responseFactory)
     {
-        $this->authorization = $authorization;
-
-        // Ensures type safety of the composed factory
-        $this->responseFactory = static function () use ($responseFactory): ResponseInterface {
-            return $responseFactory();
-        };
+        $this->authorization   = $authorization;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -50,24 +46,31 @@ final class AuthorizationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $user = $request->getAttribute(UserInterface::class, false);
+        $user = $request->getAttribute(UserInterface::class);
+
         if (!$user instanceof UserInterface) {
-            return ($this->responseFactory)()->withStatus(401);
+            try {
+                return $this->responseFactory->withStatus(401);
+            } catch (\InvalidArgumentException $e) {
+                throw new Exception\RuntimeException(
+                    'could not set statuscode'
+                );
+            }
         }
 
-        $routeResult = $request->getAttribute(RouteResult::class, false);
+        $routeResult = $request->getAttribute(RouteResult::class);
 
-        if (false === $routeResult) {
+        if (!$routeResult instanceof RouteResult) {
             throw new Exception\RuntimeException(
                 sprintf(
-                    'The %s attribute is missing in the request; cannot perform ACL authorization checks',
+                    'The %s attribute is missing in the request; cannot perform authorization checks',
                     RouteResult::class
                 )
             );
         }
 
         // No matching route. Everyone can access.
-        if ($routeResult->isFailure()) {
+        if ($routeResult->isFailure() || false === $routeResult->getMatchedRouteName()) {
             return $handler->handle($request);
         }
 
@@ -79,6 +82,12 @@ final class AuthorizationMiddleware implements MiddlewareInterface
             }
         }
 
-        return ($this->responseFactory)()->withStatus(403);
+        try {
+            return $this->responseFactory->withStatus(403);
+        } catch (\InvalidArgumentException $e) {
+            throw new Exception\RuntimeException(
+                'could not set statuscode'
+            );
+        }
     }
 }

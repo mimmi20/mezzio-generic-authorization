@@ -36,6 +36,16 @@ final class AuthorizationMiddlewareFactory
             );
         }
 
+        if (!$container->has(ResponseInterface::class)) {
+            throw new Exception\InvalidConfigException(
+                sprintf(
+                    'Cannot create %s service; dependency %s is missing',
+                    AuthorizationMiddleware::class,
+                    ResponseInterface::class
+                )
+            );
+        }
+
         try {
             return new AuthorizationMiddleware(
                 $container->get(AuthorizationInterface::class),

@@ -29,17 +29,35 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
      * @return void
      */
     public function testProviderDefinesExpectedFactoryServices(): void
     {
-        $config    = $this->provider->getDependencies();
-        $factories = $config['factories'];
+        $dependencies = $this->provider->getDependencies();
+        self::assertIsArray($dependencies);
+        self::assertArrayHasKey('factories', $dependencies);
 
+        $factories = $dependencies['factories'];
+        self::assertIsArray($factories);
         self::assertArrayHasKey(AuthorizationMiddleware::class, $factories);
     }
 
     /**
+     * @return void
+     */
+    public function testProviderDefinesBaseAuthorizationConfig(): void
+    {
+        $authorization = $this->provider->getAuthorizationConfig();
+        self::assertIsArray($authorization);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
      * @return void
      */
     public function testInvocationReturnsArrayWithDependencies(): void
@@ -48,11 +66,18 @@ final class ConfigProviderTest extends TestCase
 
         self::assertIsArray($config);
         self::assertArrayHasKey('authorization', $config);
-        self::assertIsArray($config['authorization']);
+
+        $authorization = $config['authorization'];
+        self::assertIsArray($authorization);
 
         self::assertArrayHasKey('dependencies', $config);
-        self::assertIsArray($config['dependencies']);
-        self::assertArrayHasKey('aliases', $config['dependencies']);
-        self::assertArrayHasKey('factories', $config['dependencies']);
+
+        $dependencies = $config['dependencies'];
+        self::assertIsArray($dependencies);
+        self::assertArrayHasKey('factories', $dependencies);
+
+        $factories = $dependencies['factories'];
+        self::assertIsArray($factories);
+        self::assertArrayHasKey(AuthorizationMiddleware::class, $factories);
     }
 }
