@@ -32,7 +32,6 @@
     "mezzio/mezzio-authorization": "*"
   },
   "require-dev": {
-    "ergebnis/composer-normalize": "~2.8.0",
     "infection/infection": "~0.13.6 || ~0.18",
     "mimmi20/coding-standard": "~1.0.4",
     "pepakriz/phpstan-exception-rules": "~0.11.1",
