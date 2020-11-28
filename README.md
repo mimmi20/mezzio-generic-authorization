@@ -143,9 +143,9 @@ We provide two different adapters.
 Each adapter is installable via [Composer](https://getcomposer.org):
 
 ```bash
-$ composer require mezzio/mezzio-generic-authorization-rbac
+$ composer require mimmi20/mezzio-generic-authorization-rbac
 # or
-$ composer require mezzio/mezzio-generic-authorization-acl
+$ composer require mimmi20/mezzio-generic-authorization-acl
 ```
 
 ## License

@@ -43,8 +43,8 @@
     "phpunit/phpunit": "~7.5.20 || ~8.5.8 || ~9.4.2"
   },
   "suggest": {
-    "mezzio/mezzio-generic-authorization-acl": "^1.0; provides a laminas-permissions-acl-backed adapter",
-    "mezzio/mezzio-generic-authorization-rbac": "^1.0; provides a laminas-permissions-rbac-backed adapter"
+    "mimmi20/mezzio-generic-authorization-acl": "^1.0; provides a laminas-permissions-acl-backed adapter",
+    "mimmi20/mezzio-generic-authorization-rbac": "^1.0; provides a laminas-permissions-rbac-backed adapter"
   },
   "config": {
     "platform": {
