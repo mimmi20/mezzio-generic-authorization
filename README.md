@@ -81,7 +81,7 @@ user's role (as retrieved from the `UserInterface` object) is authorized
 Authorization is performed using the `isGranted()` method of the AuthorizationInterface
 
 ```php
-public function isGranted(string $role, string $resource, ?string $privilege = null, ?\Psr\Http\Message\ServerRequestInterface\ServerRequestInterface $request = null): bool;
+public function isGranted(?string $role = null, ?string $resource = null, ?string $privilege = null, ?\Psr\Http\Message\ServerRequestInterface\ServerRequestInterface $request = null): bool;
 ```
 
 Two adapters are available:
