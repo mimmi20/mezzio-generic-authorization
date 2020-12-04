@@ -27,8 +27,8 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     private $responseFactory;
 
     /**
-     * @param \Mezzio\GenericAuthorization\AuthorizationInterface $authorization
-     * @param ResponseInterface                                   $responseFactory
+     * @param AuthorizationInterface $authorization
+     * @param ResponseInterface      $responseFactory
      */
     public function __construct(AuthorizationInterface $authorization, ResponseInterface $responseFactory)
     {
