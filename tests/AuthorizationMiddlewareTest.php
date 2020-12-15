@@ -188,6 +188,62 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(true);
+        $routeResult->expects(self::never())
+            ->method('getMatchedRouteName');
+
+        /** @var AuthorizationInterface $authorization */
+        /** @var ResponseInterface $responseFactory */
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects(self::exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([UserInterface::class], [RouteResult::class])
+            ->willReturnOnConsecutiveCalls($user, $routeResult);
+        $handler = $this->getMockBuilder(RequestHandlerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $handler->expects(self::once())
+            ->method('handle')
+            ->with($request)
+            ->willReturn($expectedResponse);
+
+        /** @var ServerRequestInterface $request */
+        /** @var RequestHandlerInterface $handler */
+        $response = $middleware->process(
+            $request,
+            $handler
+        );
+
+        self::assertSame($expectedResponse, $response);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
+     *
+     * @return void
+     */
+    public function testProcessWithRouteError2(): void
+    {
+        $authorization    = $this->createMock(AuthorizationInterface::class);
+        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $responseFactory  = $this->createMock(ResponseInterface::class);
+        $user             = $this->createMock(UserInterface::class);
+        $routeResult      = $this->getMockBuilder(RouteResult::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $routeResult->expects(self::once())
+            ->method('isFailure')
+            ->willReturn(false);
+        $routeResult->expects(self::once())
+            ->method('getMatchedRouteName')
+            ->willReturn(false);
 
         /** @var AuthorizationInterface $authorization */
         /** @var ResponseInterface $responseFactory */
@@ -256,6 +312,68 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
+
+        /** @var AuthorizationInterface $authorization */
+        /** @var ResponseInterface $responseFactory */
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects(self::exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive([UserInterface::class], [RouteResult::class])
+            ->willReturnOnConsecutiveCalls($user, $routeResult);
+        $handler = $this->createMock(RequestHandlerInterface::class);
+
+        /** @var ServerRequestInterface $request */
+        /** @var RequestHandlerInterface $handler */
+        $response = $middleware->process(
+            $request,
+            $handler
+        );
+
+        self::assertSame($expectedResponse, $response);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
+     *
+     * @return void
+     */
+    public function testProcessRoleNotGranted2(): void
+    {
+        $routeName        = 'test';
+        $authorization    = $this->createMock(AuthorizationInterface::class);
+        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $responseFactory  = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $responseFactory->expects(self::once())
+            ->method('withStatus')
+            ->with(403)
+            ->willReturn($expectedResponse);
+
+        $user = $this->getMockBuilder(UserInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->expects(self::once())
+            ->method('getRoles')
+            ->willReturn([]);
+
+        $routeResult = $this->getMockBuilder(RouteResult::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $routeResult->expects(self::once())
+            ->method('isFailure')
+            ->willReturn(false);
+        $routeResult->expects(self::exactly(2))
+            ->method('getMatchedRouteName')
+            ->willReturnOnConsecutiveCalls(true, $routeName);
 
         /** @var AuthorizationInterface $authorization */
         /** @var ResponseInterface $responseFactory */
