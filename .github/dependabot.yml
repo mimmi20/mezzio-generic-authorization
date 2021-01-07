@@ -23,6 +23,15 @@ updates:
       - dependency-name: phpunit/phpunit
         versions:
           - ">= 0"
+      - dependency-name: mezzio/mezzio-authentication
+        versions:
+          - ">= 0"
+      - dependency-name: mezzio/mezzio-router
+        versions:
+          - ">= 0"
+      - dependency-name: laminas/laminas-log
+        versions:
+          - ">= 0"
     commit-message:
       include: "scope"
       prefix: "Build"
