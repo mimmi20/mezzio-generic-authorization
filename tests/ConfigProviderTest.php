@@ -29,7 +29,7 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      *
      * @return void
@@ -46,6 +46,9 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     *
      * @return void
      */
     public function testProviderDefinesBaseAuthorizationConfig(): void
@@ -55,7 +58,7 @@ final class ConfigProviderTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\ExpectationFailedException
+     * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      *
      * @return void
