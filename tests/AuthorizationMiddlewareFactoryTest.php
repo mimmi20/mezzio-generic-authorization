@@ -23,7 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 final class AuthorizationMiddlewareFactoryTest extends TestCase
 {
     /**
-     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \PHPUnit\Framework\Exception
      *
      * @return void
      */
@@ -49,7 +49,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \PHPUnit\Framework\Exception
      *
      * @return void
      */
@@ -75,8 +75,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\ExpectationFailedException
-     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \PHPUnit\Framework\Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      *
      * @return void
@@ -106,7 +105,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\MockObject\RuntimeException
+     * @throws \PHPUnit\Framework\Exception
      *
      * @return void
      */
