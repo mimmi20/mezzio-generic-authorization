@@ -9,6 +9,7 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,13 +18,6 @@ interface AuthorizationInterface
 {
     /**
      * Check if a role is granted for a resource
-     *
-     * @param string|null                 $role
-     * @param string|null                 $resource
-     * @param string|null                 $privilege
-     * @param ServerRequestInterface|null $request
-     *
-     * @return bool
      */
     public function isGranted(?string $role = null, ?string $resource = null, ?string $privilege = null, ?ServerRequestInterface $request = null): bool;
 }

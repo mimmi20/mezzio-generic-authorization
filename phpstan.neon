@@ -19,3 +19,6 @@ parameters:
   ignoreErrors:
     - '~PHPDoc tag @throws with type .* is not compatible with parent~'
     - '~Call to static method .* with .* will always evaluate to true~'
+    - '~Call to function assert\(\) with true will always evaluate to true~'
+    - '~Instanceof between PHPUnit\\Framework\\MockObject\\MockObject&.* and .* will always evaluate to true~'
+    - '~Instanceof between .*&PHPUnit\\Framework\\MockObject\\MockObject and .* will always evaluate to true~'

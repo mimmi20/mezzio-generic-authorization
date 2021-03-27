@@ -9,6 +9,7 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization;
 
 final class ConfigProvider
@@ -16,7 +17,7 @@ final class ConfigProvider
     /**
      * Return the configuration array.
      *
-     * @return array[]
+     * @return array<array<string, array<string, array<string>|string>>>
      */
     public function __invoke(): array
     {
@@ -29,7 +30,7 @@ final class ConfigProvider
     /**
      * Returns the configuration for the AuthorizationInterface adapter
      *
-     * @return array
+     * @return array<string, array<string, array<string>>>
      */
     public function getAuthorizationConfig(): array
     {
@@ -70,7 +71,7 @@ final class ConfigProvider
     /**
      * Returns the container dependencies
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function getDependencies(): array
     {

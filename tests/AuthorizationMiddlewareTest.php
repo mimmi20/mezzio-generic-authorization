@@ -9,43 +9,44 @@
  */
 
 declare(strict_types = 1);
+
 namespace MezzioTest\GenericAuthorization;
 
+use InvalidArgumentException;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\GenericAuthorization\AuthorizationInterface;
 use Mezzio\GenericAuthorization\AuthorizationMiddleware;
 use Mezzio\GenericAuthorization\Exception\RuntimeException;
 use Mezzio\Router\RouteResult;
+use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+use function assert;
+
 final class AuthorizationMiddlewareTest extends TestCase
 {
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
-     * @return void
      */
     public function testConstructor(): void
     {
         $authorization   = $this->createMock(AuthorizationInterface::class);
         $responseFactory = $this->createMock(ResponseInterface::class);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessWithoutUserAttribute(): void
     {
@@ -59,8 +60,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with(401)
             ->willReturn($expectedResponse);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -71,10 +72,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getAttribute')
             ->with(UserInterface::class)
             ->willReturn(null);
+
         $handler = $this->createMock(RequestHandlerInterface::class);
 
-        /** @var ServerRequestInterface $request */
-        /** @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $response = $middleware->process(
             $request,
             $handler
@@ -84,15 +86,13 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessWithoutUserAttributeExcption(): void
     {
-        $exception       = new \InvalidArgumentException('test');
+        $exception       = new InvalidArgumentException('test');
         $authorization   = $this->createMock(AuthorizationInterface::class);
         $responseFactory = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
@@ -102,8 +102,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with(401)
             ->willThrowException($exception);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -119,8 +119,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('could not set statuscode');
 
-        /* @var ServerRequestInterface $request */
-        /* @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $middleware->process(
             $request,
             $handler
@@ -128,11 +128,9 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessWithoutRouteAttribute(): void
     {
@@ -140,8 +138,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $responseFactory = $this->createMock(ResponseInterface::class);
         $user            = $this->createMock(UserInterface::class);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -157,8 +155,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The Mezzio\Router\RouteResult attribute is missing in the request; cannot perform authorization checks');
 
-        /* @var ServerRequestInterface $request */
-        /* @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $middleware->process(
             $request,
             $handler
@@ -166,11 +164,9 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessWithRouteError(): void
     {
@@ -187,8 +183,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult->expects(self::never())
             ->method('getMatchedRouteName');
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -207,8 +203,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($expectedResponse);
 
-        /** @var ServerRequestInterface $request */
-        /** @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $response = $middleware->process(
             $request,
             $handler
@@ -218,11 +214,9 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessWithRouteError2(): void
     {
@@ -240,8 +234,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn(false);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -260,8 +254,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($expectedResponse);
 
-        /** @var ServerRequestInterface $request */
-        /** @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $response = $middleware->process(
             $request,
             $handler
@@ -271,11 +265,9 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessRoleNotGranted(): void
     {
@@ -307,8 +299,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -321,8 +313,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->willReturnOnConsecutiveCalls($user, $routeResult);
         $handler = $this->createMock(RequestHandlerInterface::class);
 
-        /** @var ServerRequestInterface $request */
-        /** @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $response = $middleware->process(
             $request,
             $handler
@@ -332,11 +324,9 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessRoleNotGranted2(): void
     {
@@ -368,8 +358,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturnOnConsecutiveCalls(true, $routeName);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -382,8 +372,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->willReturnOnConsecutiveCalls($user, $routeResult);
         $handler = $this->createMock(RequestHandlerInterface::class);
 
-        /** @var ServerRequestInterface $request */
-        /** @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $response = $middleware->process(
             $request,
             $handler
@@ -393,15 +383,13 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessRoleNotGrantedException(): void
     {
-        $exception       = new \InvalidArgumentException('test');
+        $exception       = new InvalidArgumentException('test');
         $routeName       = 'test';
         $authorization   = $this->createMock(AuthorizationInterface::class);
         $responseFactory = $this->getMockBuilder(ResponseInterface::class)
@@ -429,8 +417,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
@@ -446,8 +434,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('could not set statuscode');
 
-        /* @var ServerRequestInterface $request */
-        /* @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $middleware->process(
             $request,
             $handler
@@ -455,11 +443,9 @@ final class AuthorizationMiddlewareTest extends TestCase
     }
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws \Mezzio\GenericAuthorization\Exception\RuntimeException
-     *
-     * @return void
+     * @throws RuntimeException
      */
     public function testProcessRoleGranted(): void
     {
@@ -503,8 +489,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $expectedResponse = $this->createMock(ResponseInterface::class);
         $responseFactory  = $this->createMock(ResponseInterface::class);
 
-        /** @var AuthorizationInterface $authorization */
-        /** @var ResponseInterface $responseFactory */
+        assert($authorization instanceof AuthorizationInterface);
+        assert($responseFactory instanceof ResponseInterface);
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
         $handler = $this->getMockBuilder(RequestHandlerInterface::class)
@@ -515,8 +501,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($expectedResponse);
 
-        /** @var ServerRequestInterface $request */
-        /** @var RequestHandlerInterface $handler */
+        assert($request instanceof ServerRequestInterface);
+        assert($handler instanceof RequestHandlerInterface);
         $response = $middleware->process(
             $request,
             $handler
