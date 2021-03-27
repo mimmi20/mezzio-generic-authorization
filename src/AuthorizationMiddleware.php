@@ -9,8 +9,10 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization;
 
+use InvalidArgumentException;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
@@ -18,18 +20,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+use function sprintf;
+
 final class AuthorizationMiddleware implements MiddlewareInterface
 {
-    /** @var AuthorizationInterface */
-    private $authorization;
+    private AuthorizationInterface $authorization;
 
-    /** @var ResponseInterface */
-    private $responseFactory;
+    private ResponseInterface $responseFactory;
 
-    /**
-     * @param AuthorizationInterface $authorization
-     * @param ResponseInterface      $responseFactory
-     */
     public function __construct(AuthorizationInterface $authorization, ResponseInterface $responseFactory)
     {
         $this->authorization   = $authorization;
@@ -37,12 +35,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Server\RequestHandlerInterface $handler
-     *
      * @throws Exception\RuntimeException
-     *
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -51,7 +44,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         if (!$user instanceof UserInterface) {
             try {
                 return $this->responseFactory->withStatus(401);
-            } catch (\InvalidArgumentException $e) {
+            } catch (InvalidArgumentException $e) {
                 throw new Exception\RuntimeException(
                     'could not set statuscode'
                 );
@@ -84,7 +77,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
 
         try {
             return $this->responseFactory->withStatus(403);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             throw new Exception\RuntimeException(
                 'could not set statuscode'
             );

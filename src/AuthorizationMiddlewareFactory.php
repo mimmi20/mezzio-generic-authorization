@@ -9,20 +9,19 @@
  */
 
 declare(strict_types = 1);
+
 namespace Mezzio\GenericAuthorization;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use function sprintf;
+
 final class AuthorizationMiddlewareFactory
 {
     /**
-     * @param \Psr\Container\ContainerInterface $container
-     *
      * @throws Exception\InvalidConfigException
-     *
-     * @return \Mezzio\GenericAuthorization\AuthorizationMiddleware
      */
     public function __invoke(ContainerInterface $container): AuthorizationMiddleware
     {
