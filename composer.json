@@ -24,7 +24,7 @@
     "laminas/laminas-log": "^2.13.1",
     "mezzio/mezzio-authentication": "^1.2.1",
     "mezzio/mezzio-router": "^3.4.0",
-    "psr/container": "^1.1.1",
+    "psr/container": "^1.1.1 || ^2.0.1",
     "psr/http-message": "^1.0.1",
     "psr/http-server-middleware": "^1.0.1"
   },
@@ -33,8 +33,8 @@
     "mezzio/mezzio-authorization": "*"
   },
   "require-dev": {
-    "infection/infection": "^0.21.5",
-    "mimmi20/coding-standard": "^2.1.3",
+    "infection/infection": "^0.23.0",
+    "mimmi20/coding-standard": "^2.2.2",
     "pepakriz/phpstan-exception-rules": "^0.11.7",
     "phpstan/extension-installer": "^1.1.0",
     "phpstan/phpstan": "^0.12.87",
