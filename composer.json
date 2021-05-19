@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "php": "^7.4.0 || ^8.0.0",
+    "php": "^7.4.7 || ^8.0.0",
     "ext-mbstring": "*",
     "laminas/laminas-log": "^2.13.1",
     "mezzio/mezzio-authentication": "^1.2.1",
