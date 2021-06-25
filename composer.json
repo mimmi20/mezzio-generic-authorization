@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "php": "^7.4.7 || ^8.0.0",
+    "php": "^7.4.3 || ^8.0.0",
     "ext-mbstring": "*",
     "mezzio/mezzio-authentication": "^1.2.1",
     "mezzio/mezzio-router": "^3.4.0",
@@ -34,7 +34,7 @@
   "require-dev": {
     "infection/infection": "^0.23.0",
     "laminas/laminas-servicemanager": "^3.6.4",
-    "mimmi20/coding-standard": "^2.2.2",
+    "mimmi20/coding-standard": "^2.2.3",
     "pepakriz/phpstan-exception-rules": "^0.11.7",
     "phpstan/extension-installer": "^1.1.0",
     "phpstan/phpstan": "^0.12.90",
