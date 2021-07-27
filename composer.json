@@ -32,7 +32,7 @@
     "mezzio/mezzio-authorization": "*"
   },
   "require-dev": {
-    "infection/infection": "^0.23.0",
+    "infection/infection": "^0.24.0",
     "laminas/laminas-servicemanager": "^3.7.0",
     "mimmi20/coding-standard": "^2.2.3",
     "pepakriz/phpstan-exception-rules": "^0.11.7",
