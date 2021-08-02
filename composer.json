@@ -34,7 +34,7 @@
   "require-dev": {
     "infection/infection": "^0.24.0",
     "laminas/laminas-servicemanager": "^3.7.0",
-    "mimmi20/coding-standard": "^2.2.3",
+    "mimmi20/coding-standard": "^2.3.0",
     "pepakriz/phpstan-exception-rules": "^0.11.7",
     "phpstan/extension-installer": "^1.1.0",
     "phpstan/phpstan": "^0.12.94",
