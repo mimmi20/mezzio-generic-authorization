@@ -39,7 +39,7 @@
     "phpstan/phpstan-deprecation-rules": "^0.12.6",
     "phpstan/phpstan-phpunit": "^0.12.22",
     "phpstan/phpstan-strict-rules": "^0.12.10",
-    "phpunit/phpunit": "^9.5.8"
+    "phpunit/phpunit": "^9.5.10"
   },
   "suggest": {
     "mimmi20/mezzio-generic-authorization-acl": "^1.0; provides a laminas-permissions-acl-backed adapter",
