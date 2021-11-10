@@ -431,4 +431,4 @@ jobs:
           verbose: false
 
       - name: "Run mutation tests with infection/infection"
-        run: "infection -s --min-covered-msi=100 --min-msi=100 --coverage=.build/coverage --logger-github"
+        run: "infection -s --min-covered-msi=93 --min-msi=93 --coverage=.build/coverage --logger-github"
