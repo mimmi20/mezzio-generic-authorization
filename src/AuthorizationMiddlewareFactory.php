@@ -16,6 +16,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use function assert;
 use function sprintf;
 
 final class AuthorizationMiddlewareFactory
@@ -46,10 +47,8 @@ final class AuthorizationMiddlewareFactory
         }
 
         try {
-            return new AuthorizationMiddleware(
-                $container->get(AuthorizationInterface::class),
-                $container->get(ResponseInterface::class)
-            );
+            $auth     = $container->get(AuthorizationInterface::class);
+            $response = $container->get(ResponseInterface::class);
         } catch (ContainerExceptionInterface $e) {
             throw new Exception\InvalidConfigException(
                 sprintf(
@@ -60,5 +59,10 @@ final class AuthorizationMiddlewareFactory
                 )
             );
         }
+
+        assert($auth instanceof AuthorizationInterface);
+        assert($response instanceof ResponseInterface);
+
+        return new AuthorizationMiddleware($auth, $response);
     }
 }
