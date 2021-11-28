@@ -28,9 +28,6 @@ use function assert;
 
 final class AuthorizationMiddlewareTest extends TestCase
 {
-    private const ROLE1 = 'test-role1';
-    private const ROLE2 = 'test-role2';
-
     /**
      * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
@@ -453,13 +450,15 @@ final class AuthorizationMiddlewareTest extends TestCase
     public function testProcessRoleGranted(): void
     {
         $routeName = 'test';
+        $role1     = 'test-role1';
+        $role2     = 'test-role2';
 
         $user = $this->getMockBuilder(UserInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $user->expects(self::once())
             ->method('getRoles')
-            ->willReturn([self::ROLE1, self::ROLE2]);
+            ->willReturn([$role1, $role2]);
 
         $routeResult = $this->getMockBuilder(RouteResult::class)
             ->disableOriginalConstructor()
@@ -484,7 +483,7 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->getMock();
         $authorization->expects(self::exactly(2))
             ->method('isGranted')
-            ->withConsecutive([self::ROLE1, $routeName, null, $request], [self::ROLE2, $routeName, null, $request])
+            ->withConsecutive([$role1, $routeName, null, $request], [$role2, $routeName, null, $request])
             ->willReturnOnConsecutiveCalls(false, true);
 
         $expectedResponse = $this->createMock(ResponseInterface::class);
