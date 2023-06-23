@@ -1,8 +1,8 @@
 <?php
 /**
- * This file is part of the mimmi20/mezzio-generic-authorization package.
+ * This file is part of the mimmi20/mezzio-generic-authorization-rbac package.
  *
- * Copyright (c) 2020-2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,27 +10,22 @@
 
 declare(strict_types = 1);
 
-namespace MezzioTest\GenericAuthorization;
+namespace Mimmi20\Mezzio\GenericAuthorization;
 
-use Mezzio\GenericAuthorization\AuthorizationMiddleware;
-use Mezzio\GenericAuthorization\ConfigProvider;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 final class ConfigProviderTest extends TestCase
 {
     private ConfigProvider $provider;
 
+    /** @throws void */
     protected function setUp(): void
     {
         $this->provider = new ConfigProvider();
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testProviderDefinesExpectedFactoryServices(): void
     {
         $dependencies = $this->provider->getDependencies();
@@ -42,20 +37,14 @@ final class ConfigProviderTest extends TestCase
         self::assertArrayHasKey(AuthorizationMiddleware::class, $factories);
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testProviderDefinesBaseAuthorizationConfig(): void
     {
         $authorization = $this->provider->getAuthorizationConfig();
         self::assertIsArray($authorization);
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testInvocationReturnsArrayWithDependencies(): void
     {
         $config = ($this->provider)();
