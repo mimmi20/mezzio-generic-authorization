@@ -108,6 +108,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('could not set statuscode');
+        $this->expectExceptionCode(0);
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
@@ -485,6 +486,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('could not set statuscode');
+        $this->expectExceptionCode(0);
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
