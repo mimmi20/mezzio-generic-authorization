@@ -70,10 +70,10 @@
   },
   "config": {
     "preferred-install": "dist",
+    "lock": false,
     "sort-packages": true,
     "allow-plugins": {
-      "laminas/laminas-dependency-plugin": false,
-      "ergebnis/composer-normalize": false,
+      "laminas/laminas-dependency-plugin": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "phpstan/extension-installer": true,
       "infection/extension-installer": true
