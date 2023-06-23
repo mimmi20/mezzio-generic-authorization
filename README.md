@@ -28,8 +28,8 @@ If you are using the provided midleware, the **route name** is used as the resou
 You can install the mezzio-generic-authorization library with
 [Composer](https://getcomposer.org):
 
-```bash
-$ composer require mimmi20/mezzio-generic-authorization
+```shell
+composer require mimmi20/mezzio-generic-authorization
 ```
 
 # Introduction
@@ -104,7 +104,7 @@ Two adapters are available:
 
 You can configure the authorization adapter to use via your service container
 configuration. Specifically, you can either map the service name
-`Mezzio\GenericAuthorization\AuthorizationInterface` to a factory, or alias it
+`Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface` to a factory, or alias it
 to the appropriate service.
 
 For instance, using [Mezzio container configuration](https://docs.mezzio.dev/mezzio/v3/features/container/config/),
@@ -113,8 +113,8 @@ following ways:
 
 - Using an alias:
   ```php
-  use Mezzio\GenericAuthorization\AuthorizationInterface;
-  use Mezzio\GenericAuthorization\Acl\LaminasAcl;
+  use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
+  use Mimmi20\Mezzio\GenericAuthorization\Acl\LaminasAcl;
   
   return [
       'dependencies' => [
@@ -128,8 +128,8 @@ following ways:
 
 - Mapping to a factory:
   ```php
-  use Mezzio\GenericAuthorization\AuthorizationInterface;
-  use Mezzio\GenericAuthorization\Acl\LaminasAclFactory;
+  use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
+  use Mimmi20\Mezzio\GenericAuthorization\Acl\LaminasAclFactory;
   
   return [
       'dependencies' => [
@@ -148,10 +148,10 @@ We provide two different adapters.
 
 Each adapter is installable via [Composer](https://getcomposer.org):
 
-```bash
-$ composer require mimmi20/mezzio-generic-authorization-rbac
+```shell
+composer require mimmi20/mezzio-generic-authorization-rbac
 # or
-$ composer require mimmi20/mezzio-generic-authorization-acl
+composer require mimmi20/mezzio-generic-authorization-acl
 ```
 
 ## License
