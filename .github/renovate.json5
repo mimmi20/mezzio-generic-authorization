@@ -3,7 +3,7 @@
 
   "extends": ["github>whitesource/merge-confidence:beta"],
 
-  "enabled": false,
+  "enabled": true,
   "assignees": [
     "mimmi20"
   ],
@@ -14,7 +14,8 @@
   "enabledManagers": ["composer", "github-actions", "npm"],
   "ignoreUnstable": true,
   "labels": [
-    "dependencies"
+    "dependencies",
+    "patch"
   ],
   "lockFileMaintenance": {
     "enabled": false
@@ -39,11 +40,11 @@
     "mimmi20"
   ],
   "rollbackPrs": true,
-  "schedule": ["before 3am"],
+  "schedule": ["at 4:00 am on Monday"],
   "semanticCommits": "disabled",
   "separateMajorMinor": true,
   "separateMinorPatch": false,
-  "timezone": "UTC",
+  "timezone": "Europe/Berlin",
   "updateLockFiles": false,
   "updateNotScheduled": false,
   "packageRules": [
