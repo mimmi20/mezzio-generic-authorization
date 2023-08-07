@@ -383,9 +383,15 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(false);
-        $routeResult->expects(self::exactly(2))
+        $matcher = self::exactly(2);
+        $routeResult->expects($matcher)
             ->method('getMatchedRouteName')
-            ->willReturnOnConsecutiveCalls(true, $routeName);
+            ->willReturnCallback(
+                static fn (): bool | string => match ($matcher->numberOfInvocations()) {
+                    1 => true,
+                    default => $routeName,
+                },
+            );
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseInterface);
