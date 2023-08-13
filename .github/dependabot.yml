@@ -44,10 +44,10 @@ updates:
       include: "scope"
       prefix: "composer"
 
-#    ignore:
-#      - dependency-name: infection/infection
-#        versions:
-#          - ">= 0"
+    ignore:
+      - dependency-name: "psr/container"
+        versions:
+          - ">= 0"
 #      - dependency-name: phpunit/phpunit
 #        versions:
 #          - ">= 0"
