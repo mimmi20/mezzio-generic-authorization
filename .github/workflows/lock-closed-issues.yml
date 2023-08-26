@@ -1,4 +1,8 @@
-name: Lock closed issue
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+# file-version: 1.0
+
+name: "Lock closed issue"
 
 on:
   issues:
@@ -7,8 +11,8 @@ on:
 
 jobs:
   lock:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
-      - uses: Dunning-Kruger/lock-issues@v1.1
+      - uses: "Dunning-Kruger/lock-issues@v1.1"
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
