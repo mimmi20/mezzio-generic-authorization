@@ -37,7 +37,7 @@
     "ext-tokenizer": "*",
     "ext-xml": "*",
     "ext-xmlwriter": "*",
-    "infection/infection": "^0.27.3",
+    "infection/infection": "^0.27.5",
     "laminas/laminas-servicemanager": "^3.21.0",
     "mimmi20/coding-standard": "^5.1.19",
     "nikic/php-parser": "^4.17.1",
