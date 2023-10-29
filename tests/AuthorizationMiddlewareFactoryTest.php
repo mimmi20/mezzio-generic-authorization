@@ -23,7 +23,10 @@ use function assert;
 
 final class AuthorizationMiddlewareFactoryTest extends TestCase
 {
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function testFactoryWithoutAuthorization(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -47,7 +50,10 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
         $factory($container);
     }
 
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function testFactoryWithoutResponse(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -83,7 +89,10 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
         $factory($container);
     }
 
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function testFactory(): void
     {
         $authorization = $this->createMock(AuthorizationInterface::class);
@@ -129,7 +138,10 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
     }
 
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function testFactoryContainerException(): void
     {
         $exception = new ServiceNotCreatedException('test');
