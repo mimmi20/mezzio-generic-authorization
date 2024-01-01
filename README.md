@@ -10,7 +10,16 @@
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/mimmi20/mezzio-generic-authorization.svg)](https://isitmaintained.com/project/mimmi20/mezzio-generic-authorization "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/mimmi20/mezzio-generic-authorization.svg)](https://isitmaintained.com/project/mimmi20/mezzio-generic-authorization "Percentage of issues still open")
 
-# Introduction
+## Installation
+
+You can install the mezzio-generic-authorization library with
+[Composer](https://getcomposer.org):
+
+```shell
+composer require mimmi20/mezzio-generic-authorization
+```
+
+## Introduction
 
 This component provides middleware for [Mezzio](https://github.com/mezzio/mezzio)
 and [PSR-7](https://www.php-fig.org/psr/psr-7/) applications for authorizing
@@ -21,20 +30,6 @@ Unlike in [mezzio-authorization](https://github.com/mezzio/mezzio-authorization)
 the `ServerRequestInterface` by default. This makes it possible to use this component in combination with [mezzio-navigation](https://github.com/mimmi20/mezzio-navigation).
 
 If you are using the provided midleware, the **route name** is used as the resource.
-
-## Installation
-
-You can install the mezzio-generic-authorization library with
-[Composer](https://getcomposer.org):
-
-```shell
-composer require mimmi20/mezzio-generic-authorization
-```
-
-# Introduction
-
-This component provides authorization middleware for [PSR-7](https://www.php-fig.org/psr/psr-7/)
-and [PSR-15](https://www.php-fig.org/psr/psr-15/) applications.
 
 An authorization system first needs authentication: to verify that an identity
 has access to something (i.e., is authorized) we first need the _identity_, which
@@ -99,7 +94,7 @@ Two adapters are available:
 > If you want to know more about authentication using middleware in PHP,
 > we suggest reading the blog post ["Authorize users using Middleware"](https://framework.zend.com/blog/2017-05-04-authorization-middleware.html).
 
-# Authorization adapters
+## Authorization adapters
 
 You can configure the authorization adapter to use via your service container
 configuration. Specifically, you can either map the service name
@@ -111,6 +106,7 @@ you could select the mezzio-authorization-acl adapter in either of the
 following ways:
 
 - Using an alias:
+
   ```php
   use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
   use Mimmi20\Mezzio\GenericAuthorization\Acl\LaminasAcl;
@@ -126,6 +122,7 @@ following ways:
   ```
 
 - Mapping to a factory:
+
   ```php
   use Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface;
   use Mimmi20\Mezzio\GenericAuthorization\Acl\LaminasAclFactory;
