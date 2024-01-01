@@ -10,7 +10,6 @@
 [![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/mimmi20/mezzio-generic-authorization.svg)](https://isitmaintained.com/project/mimmi20/mezzio-generic-authorization "Average time to resolve an issue")
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/mimmi20/mezzio-generic-authorization.svg)](https://isitmaintained.com/project/mimmi20/mezzio-generic-authorization "Percentage of issues still open")
 
-
 # Introduction
 
 This component provides middleware for [Mezzio](https://github.com/mezzio/mezzio)
