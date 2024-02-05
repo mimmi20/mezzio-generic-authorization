@@ -74,6 +74,7 @@ jobs:
         php-version:
           - "8.1"
           - "8.2"
+          - "8.3"
 
         dependencies:
           - "lowest"
@@ -175,6 +176,8 @@ jobs:
           file: ".build/coverage/clover.xml"
           flags: "phpunit,php-${{ matrix.php-version }},${{ matrix.operating-system }}"
           verbose: false
+        env:
+          CODECOV_TOKEN: "${{ secrets.CODECOV_TOKEN }}"
 
       - name: "Run mutation tests with infection/infection"
         env:
