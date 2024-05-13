@@ -37,6 +37,7 @@ final class ConfigProvider
      * @throws void
      *
      * @phpcs:disable Squiz.Arrays.ArrayDeclaration.MultiLineNotAllowed
+     * @api
      */
     public function getAuthorizationConfig(): array
     {
@@ -80,6 +81,8 @@ final class ConfigProvider
      * @return array<string, array<string, string>>
      *
      * @throws void
+     *
+     * @api
      */
     public function getDependencies(): array
     {
