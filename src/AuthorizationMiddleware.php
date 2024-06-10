@@ -15,11 +15,14 @@ namespace Mimmi20\Mezzio\GenericAuthorization;
 use InvalidArgumentException;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Router\RouteResult;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+use function count;
+use function iterator_to_array;
 use function sprintf;
 
 final class AuthorizationMiddleware implements MiddlewareInterface
@@ -27,7 +30,8 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     /** @throws void */
     public function __construct(
         private readonly AuthorizationInterface $authorization,
-        private readonly ResponseInterface $responseFactory,
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly string | null $defaultPrivilege,
     ) {
         // nothing to do
     }
@@ -39,7 +43,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
 
         if (!$user instanceof UserInterface) {
             try {
-                return $this->responseFactory->withStatus(401);
+                return $this->responseFactory->createResponse(401);
             } catch (InvalidArgumentException $e) {
                 throw new Exception\RuntimeException('could not set statuscode', 0, $e);
             }
@@ -62,15 +66,22 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         }
 
         $routeName = $routeResult->getMatchedRouteName();
+        $roles     = iterator_to_array($user->getRoles());
 
-        foreach ($user->getRoles() as $role) {
-            if ($this->authorization->isGranted($role, $routeName, null, $request)) {
+        if (count($roles)) {
+            foreach ($roles as $role) {
+                if ($this->authorization->isGranted($role, $routeName, $this->defaultPrivilege, $request)) {
+                    return $handler->handle($request);
+                }
+            }
+        } else {
+            if ($this->authorization->isGranted(null, $routeName, $this->defaultPrivilege, $request)) {
                 return $handler->handle($request);
             }
         }
 
         try {
-            return $this->responseFactory->withStatus(403);
+            return $this->responseFactory->createResponse(403);
         } catch (InvalidArgumentException $e) {
             throw new Exception\RuntimeException('could not set statuscode', 0, $e);
         }
