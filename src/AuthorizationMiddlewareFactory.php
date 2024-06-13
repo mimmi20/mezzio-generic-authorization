@@ -18,6 +18,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 
 use function assert;
+use function is_array;
 use function is_string;
 use function sprintf;
 
@@ -47,9 +48,9 @@ final class AuthorizationMiddlewareFactory
         }
 
         try {
-            $auth             = $container->get(AuthorizationInterface::class);
-            $response         = $container->get(ResponseFactoryInterface::class);
-            $defaultPrivilege = $container->get('config')['authorization']['default-privilege'] ?? null;
+            $auth     = $container->get(AuthorizationInterface::class);
+            $response = $container->get(ResponseFactoryInterface::class);
+            $config   = $container->get('config');
         } catch (ContainerExceptionInterface $e) {
             throw new InvalidConfigException(
                 sprintf(
@@ -61,6 +62,12 @@ final class AuthorizationMiddlewareFactory
                 0,
                 $e,
             );
+        }
+
+        $defaultPrivilege = null;
+
+        if (is_array($config)) {
+            $defaultPrivilege = $config['authorization']['default-privilege'] ?? null;
         }
 
         assert($auth instanceof AuthorizationInterface);

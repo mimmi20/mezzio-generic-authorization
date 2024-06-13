@@ -70,7 +70,14 @@ final class AuthorizationMiddleware implements MiddlewareInterface
 
         if (count($roles)) {
             foreach ($roles as $role) {
-                if ($this->authorization->isGranted($role, $routeName, $this->defaultPrivilege, $request)) {
+                if (
+                    $this->authorization->isGranted(
+                        $role,
+                        $routeName,
+                        $this->defaultPrivilege,
+                        $request,
+                    )
+                ) {
                     return $handler->handle($request);
                 }
             }

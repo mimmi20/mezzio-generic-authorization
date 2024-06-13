@@ -17,7 +17,7 @@ use Mimmi20\Mezzio\GenericAuthorization\Exception\InvalidConfigException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 
 use function assert;
 
@@ -29,9 +29,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      */
     public function testFactoryWithoutAuthorization(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('has')
             ->with(AuthorizationInterface::class)
@@ -56,9 +54,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      */
     public function testFactoryWithoutResponse(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('has')
@@ -66,7 +62,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
                 static function (string $id) use ($matcher): bool {
                     match ($matcher->numberOfInvocations()) {
                         1 => self::assertSame(AuthorizationInterface::class, $id),
-                        default => self::assertSame(ResponseInterface::class, $id),
+                        default => self::assertSame(ResponseFactoryInterface::class, $id),
                     };
 
                     return match ($matcher->numberOfInvocations()) {
@@ -82,7 +78,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Cannot create Mimmi20\Mezzio\GenericAuthorization\AuthorizationMiddleware service; dependency Psr\Http\Message\ResponseInterface is missing',
+            'Cannot create Mimmi20\Mezzio\GenericAuthorization\AuthorizationMiddleware service; dependency Psr\Http\Message\ResponseFactoryInterface is missing',
         );
 
         assert($container instanceof ContainerInterface);
@@ -96,11 +92,9 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     public function testFactory(): void
     {
         $authorization = $this->createMock(AuthorizationInterface::class);
-        $response      = $this->createMock(ResponseInterface::class);
+        $response      = $this->createMock(ResponseFactoryInterface::class);
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('has')
@@ -108,24 +102,26 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
                 static function (string $id) use ($matcher): bool {
                     match ($matcher->numberOfInvocations()) {
                         1 => self::assertSame(AuthorizationInterface::class, $id),
-                        default => self::assertSame(ResponseInterface::class, $id),
+                        default => self::assertSame(ResponseFactoryInterface::class, $id),
                     };
 
                     return true;
                 },
             );
-        $matcher = self::exactly(2);
+        $matcher = self::exactly(3);
         $container->expects($matcher)
             ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($matcher, $authorization, $response): mixed {
                     match ($matcher->numberOfInvocations()) {
                         1 => self::assertSame(AuthorizationInterface::class, $id),
-                        default => self::assertSame(ResponseInterface::class, $id),
+                        3 => self::assertSame('config', $id),
+                        default => self::assertSame(ResponseFactoryInterface::class, $id),
                     };
 
                     return match ($matcher->numberOfInvocations()) {
                         1 => $authorization,
+                        3 => null,
                         default => $response,
                     };
                 },
@@ -145,9 +141,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     public function testFactoryContainerException(): void
     {
         $exception = new ServiceNotCreatedException('test');
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->createMock(ContainerInterface::class);
         $matcher   = self::exactly(2);
         $container->expects($matcher)
             ->method('has')
@@ -155,7 +149,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
                 static function (string $id) use ($matcher): bool {
                     match ($matcher->numberOfInvocations()) {
                         1 => self::assertSame(AuthorizationInterface::class, $id),
-                        default => self::assertSame(ResponseInterface::class, $id),
+                        default => self::assertSame(ResponseFactoryInterface::class, $id),
                     };
 
                     return true;
@@ -170,7 +164,7 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
-            'Cannot create Mimmi20\Mezzio\GenericAuthorization\AuthorizationMiddleware service; could not initialize dependency Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface or Psr\Http\Message\ResponseInterface',
+            'Cannot create Mimmi20\Mezzio\GenericAuthorization\AuthorizationMiddleware service; could not initialize dependency Mimmi20\Mezzio\GenericAuthorization\AuthorizationInterface or Psr\Http\Message\ResponseFactoryInterface',
         );
 
         assert($container instanceof ContainerInterface);

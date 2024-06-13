@@ -18,6 +18,7 @@ use Mezzio\Router\RouteResult;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\RuntimeException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -30,11 +31,11 @@ final class AuthorizationMiddlewareTest extends TestCase
     public function testConstructor(): void
     {
         $authorization   = $this->createMock(AuthorizationInterface::class);
-        $responseFactory = $this->createMock(ResponseInterface::class);
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
     }
 
@@ -46,22 +47,19 @@ final class AuthorizationMiddlewareTest extends TestCase
     {
         $authorization    = $this->createMock(AuthorizationInterface::class);
         $expectedResponse = $this->createMock(ResponseInterface::class);
-        $responseFactory  = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
-            ->method('withStatus')
-            ->with(401)
+            ->method('createResponse')
+            ->with(401, '')
             ->willReturn($expectedResponse);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(self::once())
             ->method('getAttribute')
             ->with(UserInterface::class)
@@ -82,28 +80,26 @@ final class AuthorizationMiddlewareTest extends TestCase
      */
     public function testProcessWithoutUserAttributeExcption(): void
     {
-        $exception       = new InvalidArgumentException('test');
-        $authorization   = $this->createMock(AuthorizationInterface::class);
-        $responseFactory = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $exception     = new InvalidArgumentException('test');
+        $authorization = $this->createMock(AuthorizationInterface::class);
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
-            ->method('withStatus')
-            ->with(401)
+            ->method('createResponse')
+            ->with(401, '')
             ->willThrowException($exception);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(self::once())
             ->method('getAttribute')
             ->with(UserInterface::class)
             ->willReturn(null);
+
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $this->expectException(RuntimeException::class);
@@ -122,17 +118,15 @@ final class AuthorizationMiddlewareTest extends TestCase
     public function testProcessWithoutRouteAttribute(): void
     {
         $authorization   = $this->createMock(AuthorizationInterface::class);
-        $responseFactory = $this->createMock(ResponseInterface::class);
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $user            = $this->createMock(UserInterface::class);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -151,6 +145,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                     };
                 },
             );
+
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $this->expectException(RuntimeException::class);
@@ -171,11 +166,10 @@ final class AuthorizationMiddlewareTest extends TestCase
     {
         $authorization    = $this->createMock(AuthorizationInterface::class);
         $expectedResponse = $this->createMock(ResponseInterface::class);
-        $responseFactory  = $this->createMock(ResponseInterface::class);
+        $responseFactory  = $this->createMock(ResponseFactoryInterface::class);
         $user             = $this->createMock(UserInterface::class);
-        $routeResult      = $this->getMockBuilder(RouteResult::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(true);
@@ -183,13 +177,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName');
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -208,9 +200,8 @@ final class AuthorizationMiddlewareTest extends TestCase
                     };
                 },
             );
-        $handler = $this->getMockBuilder(RequestHandlerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
             ->method('handle')
             ->with($request)
@@ -231,11 +222,10 @@ final class AuthorizationMiddlewareTest extends TestCase
     {
         $authorization    = $this->createMock(AuthorizationInterface::class);
         $expectedResponse = $this->createMock(ResponseInterface::class);
-        $responseFactory  = $this->createMock(ResponseInterface::class);
+        $responseFactory  = $this->createMock(ResponseFactoryInterface::class);
         $user             = $this->createMock(UserInterface::class);
-        $routeResult      = $this->getMockBuilder(RouteResult::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(false);
@@ -244,13 +234,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->willReturn(false);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -269,9 +257,8 @@ final class AuthorizationMiddlewareTest extends TestCase
                     };
                 },
             );
-        $handler = $this->getMockBuilder(RequestHandlerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
             ->method('handle')
             ->with($request)
@@ -293,24 +280,19 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeName        = 'test';
         $authorization    = $this->createMock(AuthorizationInterface::class);
         $expectedResponse = $this->createMock(ResponseInterface::class);
-        $responseFactory  = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
-            ->method('withStatus')
-            ->with(403)
+            ->method('createResponse')
+            ->with(403, '')
             ->willReturn($expectedResponse);
 
-        $user = $this->getMockBuilder(UserInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(UserInterface::class);
         $user->expects(self::once())
             ->method('getRoles')
             ->willReturn([]);
 
-        $routeResult = $this->getMockBuilder(RouteResult::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(false);
@@ -319,13 +301,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->willReturn($routeName);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -344,6 +324,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                     };
                 },
             );
+
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         assert($request instanceof ServerRequestInterface);
@@ -362,24 +343,19 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeName        = 'test';
         $authorization    = $this->createMock(AuthorizationInterface::class);
         $expectedResponse = $this->createMock(ResponseInterface::class);
-        $responseFactory  = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
-            ->method('withStatus')
-            ->with(403)
+            ->method('createResponse')
+            ->with(403, '')
             ->willReturn($expectedResponse);
 
-        $user = $this->getMockBuilder(UserInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(UserInterface::class);
         $user->expects(self::once())
             ->method('getRoles')
             ->willReturn([]);
 
-        $routeResult = $this->getMockBuilder(RouteResult::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(false);
@@ -394,13 +370,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             );
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -419,6 +393,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                     };
                 },
             );
+
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         assert($request instanceof ServerRequestInterface);
@@ -434,27 +409,22 @@ final class AuthorizationMiddlewareTest extends TestCase
      */
     public function testProcessRoleNotGrantedException(): void
     {
-        $exception       = new InvalidArgumentException('test');
-        $routeName       = 'test';
-        $authorization   = $this->createMock(AuthorizationInterface::class);
-        $responseFactory = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $exception     = new InvalidArgumentException('test');
+        $routeName     = 'test';
+        $authorization = $this->createMock(AuthorizationInterface::class);
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
-            ->method('withStatus')
-            ->with(403)
+            ->method('createResponse')
+            ->with(403, '')
             ->willThrowException($exception);
 
-        $user = $this->getMockBuilder(UserInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(UserInterface::class);
         $user->expects(self::once())
             ->method('getRoles')
             ->willReturn([]);
 
-        $routeResult = $this->getMockBuilder(RouteResult::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(false);
@@ -463,13 +433,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->willReturn($routeName);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -488,6 +456,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                     };
                 },
             );
+
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $this->expectException(RuntimeException::class);
@@ -509,16 +478,12 @@ final class AuthorizationMiddlewareTest extends TestCase
         $role1     = 'test-role1';
         $role2     = 'test-role2';
 
-        $user = $this->getMockBuilder(UserInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(UserInterface::class);
         $user->expects(self::once())
             ->method('getRoles')
             ->willReturn([$role1, $role2]);
 
-        $routeResult = $this->getMockBuilder(RouteResult::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
             ->willReturn(false);
@@ -526,9 +491,7 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(ServerRequestInterface::class);
         $matcher = self::exactly(2);
         $request->expects($matcher)
             ->method('getAttribute')
@@ -548,9 +511,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                 },
             );
 
-        $authorization = $this->getMockBuilder(AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $authorization = $this->createMock(AuthorizationInterface::class);
         $matcher       = self::exactly(2);
         $authorization->expects($matcher)
             ->method('isGranted')
@@ -584,15 +545,14 @@ final class AuthorizationMiddlewareTest extends TestCase
             );
 
         $expectedResponse = $this->createMock(ResponseInterface::class);
-        $responseFactory  = $this->createMock(ResponseInterface::class);
+        $responseFactory  = $this->createMock(ResponseFactoryInterface::class);
 
         assert($authorization instanceof AuthorizationInterface);
-        assert($responseFactory instanceof ResponseInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
-        $handler = $this->getMockBuilder(RequestHandlerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
             ->method('handle')
             ->with($request)

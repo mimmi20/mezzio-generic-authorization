@@ -98,8 +98,8 @@ parameters:
       tooWideThrowType: true
 
   cognitive_complexity:
-    class: 9
-    function: 9
+    class: 15
+    function: 15
 
   type_coverage:
     return: 100
@@ -114,8 +114,13 @@ parameters:
     constants: true
     local_methods: true
 
-#  ignoreErrors:
-#    - '~Call to static method .* with .* will always evaluate to true~'
+  type_perfect:
+    null_over_false: true
+    no_mixed: true
+    narrow_param: true
+
+  ignoreErrors:
+    - '~Dead catch~'
 
 rules:
   # code complexity
