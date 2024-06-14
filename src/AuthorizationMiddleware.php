@@ -22,7 +22,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 use function count;
-use function iterator_to_array;
 use function sprintf;
 
 final class AuthorizationMiddleware implements MiddlewareInterface
@@ -66,7 +65,11 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         }
 
         $routeName = $routeResult->getMatchedRouteName();
-        $roles     = iterator_to_array($user->getRoles());
+        $roles     = [];
+
+        foreach ($user->getRoles() as $role) {
+            $roles[] = $role;
+        }
 
         if (count($roles)) {
             foreach ($roles as $role) {
