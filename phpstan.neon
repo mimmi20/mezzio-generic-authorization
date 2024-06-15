@@ -75,7 +75,7 @@ parameters:
   reportMaybesInMethodSignatures: true
 
   # reports violations of property type invariance
-  reportMaybesInPropertyPhpDocTypes: false
+  reportMaybesInPropertyPhpDocTypes: true
 
   # reports violations of parameter type contravariance and return type covariance in static methods
   reportStaticMethodSignatures: true

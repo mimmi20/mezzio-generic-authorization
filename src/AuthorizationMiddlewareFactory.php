@@ -17,6 +17,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 
+use function array_key_exists;
 use function assert;
 use function is_array;
 use function is_string;
@@ -68,9 +69,9 @@ final class AuthorizationMiddlewareFactory
 
         if (
             is_array($config)
-            && isset($config['authorization'])
+            && array_key_exists('authorization', $config)
             && is_array($config['authorization'])
-            && isset($config['authorization']['default-privilege'])
+            && array_key_exists('default-privilege', $config['authorization'])
             && is_string($config['authorization']['default-privilege'])
         ) {
             $defaultPrivilege = $config['authorization']['default-privilege'];
