@@ -57,7 +57,7 @@ jobs:
       skip-phpmd: false
 
   tests:
-    name: "UnitTests"
+    name: "UnitTests with PHPUnit"
 
     needs: "analytics"
 
