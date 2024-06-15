@@ -39,7 +39,7 @@ parameters:
   checkGenericClassInNonGenericObjectType: true
 
   # be strict about values with an unspecified (implicit mixed) type
-  checkImplicitMixed: false
+  checkImplicitMixed: true
 
   # reports references to built-in classes with incorrect name case
   checkInternalClassCaseSensitivity: true

@@ -18,6 +18,7 @@
   },
   "mutators": {
     "@default": true,
-    "MBString": false
+    "MBString": false,
+    "LogicalOrAllSubExprNegation": false
   }
 }

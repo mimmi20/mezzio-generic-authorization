@@ -68,6 +68,8 @@ final class AuthorizationMiddlewareFactory
 
         if (
             is_array($config)
+            && isset($config['authorization'])
+            && is_array($config['authorization'])
             && isset($config['authorization']['default-privilege'])
             && is_string($config['authorization']['default-privilege'])
         ) {
