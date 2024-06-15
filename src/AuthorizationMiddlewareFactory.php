@@ -15,9 +15,12 @@ namespace Mimmi20\Mezzio\GenericAuthorization;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\InvalidConfigException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 
+use function array_key_exists;
 use function assert;
+use function is_array;
+use function is_string;
 use function sprintf;
 
 final class AuthorizationMiddlewareFactory
@@ -35,33 +38,48 @@ final class AuthorizationMiddlewareFactory
             );
         }
 
-        if (!$container->has(ResponseInterface::class)) {
+        if (!$container->has(ResponseFactoryInterface::class)) {
             throw new InvalidConfigException(
                 sprintf(
                     'Cannot create %s service; dependency %s is missing',
                     AuthorizationMiddleware::class,
-                    ResponseInterface::class,
+                    ResponseFactoryInterface::class,
                 ),
             );
         }
 
         try {
             $auth     = $container->get(AuthorizationInterface::class);
-            $response = $container->get(ResponseInterface::class);
-        } catch (ContainerExceptionInterface) {
+            $response = $container->get(ResponseFactoryInterface::class);
+            $config   = $container->get('config');
+        } catch (ContainerExceptionInterface $e) {
             throw new InvalidConfigException(
                 sprintf(
                     'Cannot create %s service; could not initialize dependency %s or %s',
                     AuthorizationMiddleware::class,
                     AuthorizationInterface::class,
-                    ResponseInterface::class,
+                    ResponseFactoryInterface::class,
                 ),
+                0,
+                $e,
             );
         }
 
-        assert($auth instanceof AuthorizationInterface);
-        assert($response instanceof ResponseInterface);
+        $defaultPrivilege = null;
 
-        return new AuthorizationMiddleware($auth, $response);
+        if (
+            is_array($config)
+            && array_key_exists('authorization', $config)
+            && is_array($config['authorization'])
+            && array_key_exists('default-privilege', $config['authorization'])
+            && is_string($config['authorization']['default-privilege'])
+        ) {
+            $defaultPrivilege = $config['authorization']['default-privilege'];
+        }
+
+        assert($auth instanceof AuthorizationInterface);
+        assert($response instanceof ResponseFactoryInterface);
+
+        return new AuthorizationMiddleware($auth, $response, $defaultPrivilege);
     }
 }

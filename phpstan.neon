@@ -39,7 +39,7 @@ parameters:
   checkGenericClassInNonGenericObjectType: true
 
   # be strict about values with an unspecified (implicit mixed) type
-  checkImplicitMixed: false
+  checkImplicitMixed: true
 
   # reports references to built-in classes with incorrect name case
   checkInternalClassCaseSensitivity: true
@@ -75,7 +75,7 @@ parameters:
   reportMaybesInMethodSignatures: true
 
   # reports violations of property type invariance
-  reportMaybesInPropertyPhpDocTypes: false
+  reportMaybesInPropertyPhpDocTypes: true
 
   # reports violations of parameter type contravariance and return type covariance in static methods
   reportStaticMethodSignatures: true
@@ -98,8 +98,8 @@ parameters:
       tooWideThrowType: true
 
   cognitive_complexity:
-    class: 9
-    function: 9
+    class: 16
+    function: 16
 
   type_coverage:
     return: 100
@@ -114,8 +114,13 @@ parameters:
     constants: true
     local_methods: true
 
-#  ignoreErrors:
-#    - '~Call to static method .* with .* will always evaluate to true~'
+  type_perfect:
+    null_over_false: true
+    no_mixed: true
+    narrow_param: true
+
+  ignoreErrors:
+    - '~Dead catch~'
 
 rules:
   # code complexity
