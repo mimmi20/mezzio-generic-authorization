@@ -78,7 +78,6 @@ final class AuthorizationMiddlewareFactory
 
         assert($auth instanceof AuthorizationInterface);
         assert($response instanceof ResponseFactoryInterface);
-        assert($defaultPrivilege === null || is_string($defaultPrivilege));
 
         return new AuthorizationMiddleware($auth, $response, $defaultPrivilege);
     }
