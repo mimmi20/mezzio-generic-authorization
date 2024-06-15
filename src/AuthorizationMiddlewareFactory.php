@@ -66,8 +66,12 @@ final class AuthorizationMiddlewareFactory
 
         $defaultPrivilege = null;
 
-        if (is_array($config)) {
-            $defaultPrivilege = $config['authorization']['default-privilege'] ?? null;
+        if (
+            is_array($config)
+            && isset($config['authorization']['default-privilege'])
+            && is_string($config['authorization']['default-privilege'])
+        ) {
+            $defaultPrivilege = $config['authorization']['default-privilege'];
         }
 
         assert($auth instanceof AuthorizationInterface);
