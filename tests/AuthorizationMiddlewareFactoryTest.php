@@ -367,4 +367,64 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
         $dp = new ReflectionProperty($middleware, 'defaultPrivilege');
         self::assertNull($dp->getValue($middleware));
     }
+
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws ReflectionException
+     */
+    public function testFactoryWithConfigAndWrongPrivilegeType2(): void
+    {
+        $authorization   = $this->createMock(AuthorizationInterface::class);
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $config          = ['authorization' => 'abc'];
+
+        $container = $this->createMock(ContainerInterface::class);
+        $matcher   = self::exactly(2);
+        $container->expects($matcher)
+            ->method('has')
+            ->willReturnCallback(
+                static function (string $id) use ($matcher): bool {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame(AuthorizationInterface::class, $id),
+                        default => self::assertSame(ResponseFactoryInterface::class, $id),
+                    };
+
+                    return true;
+                },
+            );
+        $matcher = self::exactly(3);
+        $container->expects($matcher)
+            ->method('get')
+            ->willReturnCallback(
+                static function (string $id) use ($matcher, $authorization, $responseFactory, $config): mixed {
+                    match ($matcher->numberOfInvocations()) {
+                        1 => self::assertSame(AuthorizationInterface::class, $id),
+                        3 => self::assertSame('config', $id),
+                        default => self::assertSame(ResponseFactoryInterface::class, $id),
+                    };
+
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $authorization,
+                        3 => $config,
+                        default => $responseFactory,
+                    };
+                },
+            );
+
+        $factory = new AuthorizationMiddlewareFactory();
+
+        assert($container instanceof ContainerInterface);
+        $middleware = $factory($container);
+        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+
+        $auth = new ReflectionProperty($middleware, 'authorization');
+        self::assertSame($authorization, $auth->getValue($middleware));
+
+        $rf = new ReflectionProperty($middleware, 'responseFactory');
+        self::assertSame($responseFactory, $rf->getValue($middleware));
+
+        $dp = new ReflectionProperty($middleware, 'defaultPrivilege');
+        self::assertNull($dp->getValue($middleware));
+    }
 }
