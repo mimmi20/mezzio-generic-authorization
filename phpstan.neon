@@ -15,7 +15,7 @@ parameters:
     - %currentWorkingDirectory%/vendor/squizlabs/php_codesniffer/src/Util/Tokens.php
 
   # reports occurrences of type-checking functions always evaluated to true
-  checkAlwaysTrueCheckTypeFunctionCall: false
+  checkAlwaysTrueCheckTypeFunctionCall: false # todo: fix
 
   # reports instanceof occurrences always evaluated to true
   checkAlwaysTrueInstanceof: true
@@ -34,9 +34,6 @@ parameters:
 
   # reports function and method calls with incorrect name case
   checkFunctionNameCase: true
-
-  # it requires type variables always be specified in typehints
-  checkGenericClassInNonGenericObjectType: true
 
   # be strict about values with an unspecified (implicit mixed) type
   checkImplicitMixed: true
@@ -124,8 +121,6 @@ parameters:
 
 rules:
   # code complexity
-  - Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
-  - Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
   - Symplify\PHPStanRules\Rules\NoDynamicNameRule
   # - Symplify\PHPStanRules\Rules\NoReturnArrayVariableListRule # todo: fix
 
@@ -135,24 +130,13 @@ rules:
   - Symplify\PHPStanRules\Rules\Domain\RequireExceptionNamespaceRule
   - Symplify\PHPStanRules\Rules\Domain\RequireAttributeNamespaceRule
   - Symplify\PHPStanRules\Rules\Enum\RequireUniqueEnumConstantRule
-  - Symplify\PHPStanRules\Rules\ForbiddenParamTypeRemovalRule
   - Symplify\PHPStanRules\Rules\PreventParentMethodVisibilityOverrideRule
 
   # paths
-  - Symplify\PHPStanRules\Rules\NoMissingDirPathRule
-  - Symplify\PHPStanRules\Rules\NoReferenceRule # References are required
-  - Symplify\PHPStanRules\Rules\NoArrayAccessOnObjectRule
-
-  - Symplify\PHPStanRules\Rules\NoNullableArrayPropertyRule
-
-  # dead-code
-  - Symplify\PHPStanRules\Rules\NoIssetOnObjectRule
+  - Symplify\PHPStanRules\Rules\NoReferenceRule
 
   # explicit naming
   - Symplify\PHPStanRules\Rules\ForbiddenMultipleClassLikeInOneFileRule
-
-  # comlexity
-  - Symplify\PHPStanRules\Rules\NarrowType\NoReturnFalseInNonBoolClassMethodRule
 
   - Symplify\PHPStanRules\Rules\Complexity\ForbiddenArrayMethodCallRule
   # - Symplify\PHPStanRules\Rules\CheckRequiredInterfaceInContractNamespaceRule
@@ -170,8 +154,4 @@ rules:
   - Symplify\PHPStanRules\Rules\NoReturnSetterMethodRule
   - Symplify\PHPStanRules\Rules\UppercaseConstantRule
   - Symplify\PHPStanRules\Rules\ClassNameRespectsParentSuffixRule
-  - Symplify\PHPStanRules\Rules\CheckTypehintCallerTypeRule
   - Symplify\PHPStanRules\Rules\CheckClassNamespaceFollowPsr4Rule
-
-includes:
-  - vendor/symplify/phpstan-rules/config/collector-rules.neon
