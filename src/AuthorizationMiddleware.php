@@ -16,6 +16,7 @@ namespace Mimmi20\Mezzio\GenericAuthorization;
 use InvalidArgumentException;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Router\RouteResult;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,18 +26,19 @@ use Psr\Http\Server\RequestHandlerInterface;
 use function count;
 use function sprintf;
 
-final class AuthorizationMiddleware implements MiddlewareInterface
+final readonly class AuthorizationMiddleware implements MiddlewareInterface
 {
     /** @throws void */
     public function __construct(
-        private readonly AuthorizationInterface $authorization,
-        private readonly ResponseFactoryInterface $responseFactory,
-        private readonly string | null $defaultPrivilege,
+        private AuthorizationInterface $authorization,
+        private ResponseFactoryInterface $responseFactory,
+        private string | null $defaultPrivilege,
     ) {
         // nothing to do
     }
 
     /** @throws Exception\RuntimeException */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $request->getAttribute(UserInterface::class);
