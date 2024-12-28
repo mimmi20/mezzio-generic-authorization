@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the mimmi20/mezzio-generic-authorization-rbac package.
+ * This file is part of the mimmi20/mezzio-generic-authorization package.
  *
  * Copyright (c) 2020-2024, Thomas Mueller <mimmi20@live.de>
  *
