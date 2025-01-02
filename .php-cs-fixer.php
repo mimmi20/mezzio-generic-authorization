@@ -3,7 +3,7 @@
 /**
  * This file is part of the mimmi20/mezzio-generic-authorization package.
  *
- * Copyright (c) 2020-2024, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2020-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -25,7 +25,9 @@ $header = <<<EOF
 $finder = PhpCsFixer\Finder::create()
     ->files()
     ->name('*.php')
+    ->name('*.stub')
     ->in(__DIR__ . '/src')
+    ->in(__DIR__ . '/stubs')
     ->in(__DIR__ . '/tests')
     ->append([__DIR__ . '/rector.php'])
     ->append([__DIR__ . '/composer-dependency-analyser.php'])
@@ -50,5 +52,5 @@ return $config
             ],
         ),
     )
-    ->setUsingCache(true)
+    ->setUsingCache(false)
     ->setFinder($finder);
