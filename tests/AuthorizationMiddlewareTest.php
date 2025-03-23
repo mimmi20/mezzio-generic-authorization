@@ -17,6 +17,7 @@ use InvalidArgumentException;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Router\RouteResult;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\RuntimeException;
+use PHPUnit\Event\NoPreviousThrowableException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -28,7 +29,11 @@ use function assert;
 
 final class AuthorizationMiddlewareTest extends TestCase
 {
-    /** @throws Exception */
+    /**
+     * @throws Exception
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
     public function testConstructor(): void
     {
         $authorization   = $this->createMock(AuthorizationInterface::class);
@@ -45,6 +50,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithoutUserAttribute(): void
     {
@@ -80,6 +87,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithoutUserAttributeExcption(): void
     {
@@ -117,6 +126,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithoutRouteAttribute(): void
     {
@@ -168,6 +179,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithRouteError(): void
     {
@@ -228,6 +241,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithRouteError2(): void
     {
@@ -289,6 +304,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessRoleNotGranted(): void
     {
@@ -352,6 +369,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessRoleNotGranted2(): void
     {
@@ -421,6 +440,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessRoleNotGrantedException(): void
     {
@@ -486,6 +507,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessGrantedWithRoles(): void
     {
@@ -586,6 +609,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessGrantedWithRoles2(): void
     {
@@ -659,6 +684,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessGrantedWithoutRoles(): void
     {
@@ -730,6 +757,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessNotGrantedWithRoles(): void
     {
@@ -827,6 +856,8 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessNotGrantedWithoutRoles(): void
     {
