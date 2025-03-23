@@ -15,6 +15,7 @@ namespace Mimmi20\Mezzio\GenericAuthorization;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\InvalidConfigException;
+use PHPUnit\Event\NoPreviousThrowableException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -29,6 +30,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     /**
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryWithoutAuthorization(): void
     {
@@ -55,6 +58,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     /**
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryWithoutResponse(): void
     {
@@ -94,6 +99,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      * @throws Exception
      * @throws InvalidConfigException
      * @throws ReflectionException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactory(): void
     {
@@ -152,6 +159,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
     /**
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryContainerException(): void
     {
@@ -191,6 +200,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      * @throws Exception
      * @throws InvalidConfigException
      * @throws ReflectionException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryWithConfigWithoutPrivilege(): void
     {
@@ -251,6 +262,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      * @throws Exception
      * @throws InvalidConfigException
      * @throws ReflectionException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryWithConfigAndPrivilege(): void
     {
@@ -312,6 +325,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      * @throws Exception
      * @throws InvalidConfigException
      * @throws ReflectionException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryWithConfigAndWrongPrivilegeType(): void
     {
@@ -373,6 +388,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
      * @throws Exception
      * @throws InvalidConfigException
      * @throws ReflectionException
+     * @throws NoPreviousThrowableException
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testFactoryWithConfigAndWrongPrivilegeType2(): void
     {

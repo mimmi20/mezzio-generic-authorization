@@ -13,25 +13,15 @@ declare(strict_types = 1);
 
 namespace Mimmi20\Mezzio\GenericAuthorization;
 
-use Override;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 
 final class ConfigProviderTest extends TestCase
 {
-    private ConfigProvider $provider;
-
-    /** @throws void */
-    #[Override]
-    protected function setUp(): void
-    {
-        $this->provider = new ConfigProvider();
-    }
-
     /** @throws Exception */
     public function testProviderDefinesExpectedFactoryServices(): void
     {
-        $dependencies = $this->provider->getDependencies();
+        $dependencies = (new ConfigProvider())->getDependencies();
         self::assertIsArray($dependencies);
         self::assertArrayHasKey('factories', $dependencies);
 
@@ -43,14 +33,14 @@ final class ConfigProviderTest extends TestCase
     /** @throws Exception */
     public function testProviderDefinesBaseAuthorizationConfig(): void
     {
-        $authorization = $this->provider->getAuthorizationConfig();
+        $authorization = (new ConfigProvider())->getAuthorizationConfig();
         self::assertIsArray($authorization);
     }
 
     /** @throws Exception */
     public function testInvocationReturnsArrayWithDependencies(): void
     {
-        $config = ($this->provider)();
+        $config = (new ConfigProvider())();
 
         self::assertIsArray($config);
         self::assertArrayHasKey('authorization', $config);
