@@ -63,7 +63,7 @@ final readonly class AuthorizationMiddleware implements MiddlewareInterface
         }
 
         // No matching route. Everyone can access.
-        if ($routeResult->isFailure() || $routeResult->getMatchedRouteName() === false) {
+        if ($routeResult->getMatchedRouteName() === false) {
             return $handler->handle($request);
         }
 
