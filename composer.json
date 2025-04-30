@@ -24,7 +24,7 @@
   },
   "require": {
     "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
-    "mezzio/mezzio-authentication": "^1.10.0",
+    "mezzio/mezzio-authentication": "^1.11.0",
     "mezzio/mezzio-router": "^3.18.0",
     "psr/container": "^1.1.2 || ^2.0.2",
     "psr/http-factory": "^1.1.0",
