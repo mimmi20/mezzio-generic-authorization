@@ -113,6 +113,7 @@ updates:
     ignore:
       - dependency-name: "psr/container"
       - dependency-name: "psr/http-message"
+      - dependency-name: "mezzio/mezzio-router"
 
     rebase-strategy: "auto"
 
