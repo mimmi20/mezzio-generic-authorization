@@ -1,6 +1,6 @@
 {
   "name": "mimmi20/mezzio-generic-authorization",
-  "description": "Provides a Authorization middleware for Mezzio and PSR-7 applications.",
+  "description": "Provides a Generic Authorization middleware for Mezzio.",
   "license": "MIT",
   "type": "library",
   "keywords": [
