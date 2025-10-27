@@ -40,7 +40,7 @@
     "ext-xml": "*",
     "ext-xmlwriter": "*",
     "infection/infection": "^0.31.7",
-    "laminas/laminas-servicemanager": "^4.4.0",
+    "laminas/laminas-servicemanager": "^4.5.0",
     "mimmi20/coding-standard": "^6.2.5",
     "nikic/php-parser": "^5.6.1",
     "phpstan/extension-installer": "^1.4.3",
