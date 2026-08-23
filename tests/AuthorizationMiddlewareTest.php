@@ -17,7 +17,6 @@ use InvalidArgumentException;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Router\RouteResult;
 use Mimmi20\Mezzio\GenericAuthorization\Exception\RuntimeException;
-use PHPUnit\Event\NoPreviousThrowableException;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -29,34 +28,32 @@ use function assert;
 
 final class AuthorizationMiddlewareTest extends TestCase
 {
-    /**
-     * @throws Exception
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
+    /** @throws Exception */
     public function testConstructor(): void
     {
-        $authorization   = $this->createMock(AuthorizationInterface::class);
+        $authorization   = self::createStub(AuthorizationInterface::class);
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
             ->method('createResponse');
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
     }
 
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithoutUserAttribute(): void
     {
-        $authorization    = $this->createMock(AuthorizationInterface::class);
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $authorization    = self::createStub(AuthorizationInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
@@ -66,20 +63,24 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(self::once())
             ->method('getAttribute')
             ->with(UserInterface::class)
-            ->willReturn(null);
+            ->willReturn(value: null);
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = self::createStub(RequestHandlerInterface::class);
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -87,32 +88,34 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithoutUserAttributeExcption(): void
     {
-        $exception     = new InvalidArgumentException('test');
-        $authorization = $this->createMock(AuthorizationInterface::class);
+        $invalidArgumentException = new InvalidArgumentException('test');
+        $authorization            = self::createStub(AuthorizationInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
             ->method('createResponse')
             ->with(401, '')
-            ->willThrowException($exception);
+            ->willThrowException($invalidArgumentException);
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(self::once())
             ->method('getAttribute')
             ->with(UserInterface::class)
-            ->willReturn(null);
+            ->willReturn(value: null);
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = self::createStub(RequestHandlerInterface::class);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('could not set statuscode');
@@ -120,51 +123,53 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $middleware->process($request, $handler);
+        $authorizationMiddleware->process($request, $handler);
     }
 
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithoutRouteAttribute(): void
     {
-        $authorization = $this->createMock(AuthorizationInterface::class);
+        $authorization = self::createStub(AuthorizationInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
             ->method('createResponse');
 
-        $user = $this->createMock(UserInterface::class);
+        $user = self::createStub(UserInterface::class);
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => null,
                     };
                 },
             );
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = self::createStub(RequestHandlerInterface::class);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
@@ -173,25 +178,23 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $middleware->process($request, $handler);
+        $authorizationMiddleware->process($request, $handler);
     }
 
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithRouteError(): void
     {
-        $authorization    = $this->createMock(AuthorizationInterface::class);
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $authorization    = self::createStub(AuthorizationInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
             ->method('createResponse');
 
-        $user = $this->createMock(UserInterface::class);
+        $user = self::createStub(UserInterface::class);
 
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
@@ -202,23 +205,27 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
@@ -233,7 +240,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -241,19 +248,17 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessWithRouteError2(): void
     {
-        $authorization    = $this->createMock(AuthorizationInterface::class);
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $authorization    = self::createStub(AuthorizationInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
             ->method('createResponse');
 
-        $user = $this->createMock(UserInterface::class);
+        $user = self::createStub(UserInterface::class);
 
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
@@ -265,23 +270,27 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
@@ -296,7 +305,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -304,14 +313,12 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessRoleNotGranted(): void
     {
         $routeName        = 'test';
-        $authorization    = $this->createMock(AuthorizationInterface::class);
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $authorization    = self::createStub(AuthorizationInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
@@ -337,31 +344,31 @@ final class AuthorizationMiddlewareTest extends TestCase
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
                 },
             );
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = self::createStub(RequestHandlerInterface::class);
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -369,14 +376,12 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessRoleNotGranted2(): void
     {
         $routeName        = 'test';
-        $authorization    = $this->createMock(AuthorizationInterface::class);
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $authorization    = self::createStub(AuthorizationInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
@@ -408,31 +413,31 @@ final class AuthorizationMiddlewareTest extends TestCase
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
                 },
             );
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = self::createStub(RequestHandlerInterface::class);
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -440,20 +445,18 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessRoleNotGrantedException(): void
     {
-        $exception     = new InvalidArgumentException('test');
-        $routeName     = 'test';
-        $authorization = $this->createMock(AuthorizationInterface::class);
+        $invalidArgumentException = new InvalidArgumentException('test');
+        $routeName                = 'test';
+        $authorization            = self::createStub(AuthorizationInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
             ->method('createResponse')
             ->with(403, '')
-            ->willThrowException($exception);
+            ->willThrowException($invalidArgumentException);
 
         $user = $this->createMock(UserInterface::class);
         $user->expects(self::once())
@@ -473,27 +476,27 @@ final class AuthorizationMiddlewareTest extends TestCase
         $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
         self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
                 },
             );
 
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler = self::createStub(RequestHandlerInterface::class);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('could not set statuscode');
@@ -501,14 +504,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $middleware->process($request, $handler);
+        $authorizationMiddleware->process($request, $handler);
     }
 
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessGrantedWithRoles(): void
     {
@@ -582,7 +583,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                 },
             );
 
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
@@ -601,7 +602,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -609,8 +610,6 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessGrantedWithRoles2(): void
     {
@@ -631,20 +630,20 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
@@ -655,9 +654,9 @@ final class AuthorizationMiddlewareTest extends TestCase
         $authorization->expects(self::once())
             ->method('isGranted')
             ->with($role1, $routeName, null, $request)
-            ->willReturn(true);
+            ->willReturn(value: true);
 
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
@@ -676,7 +675,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -684,8 +683,6 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessGrantedWithoutRoles(): void
     {
@@ -704,20 +701,20 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
@@ -728,9 +725,9 @@ final class AuthorizationMiddlewareTest extends TestCase
         $authorization->expects(self::once())
             ->method('isGranted')
             ->with(null, $routeName, null, $request)
-            ->willReturn(true);
+            ->willReturn(value: true);
 
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::never())
@@ -749,7 +746,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -757,8 +754,6 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessNotGrantedWithRoles(): void
     {
@@ -848,7 +843,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
@@ -856,8 +851,6 @@ final class AuthorizationMiddlewareTest extends TestCase
     /**
      * @throws Exception
      * @throws RuntimeException
-     * @throws NoPreviousThrowableException
-     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testProcessNotGrantedWithoutRoles(): void
     {
@@ -876,20 +869,20 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
-        $request = $this->createMock(ServerRequestInterface::class);
-        $matcher = self::exactly(2);
-        $request->expects($matcher)
+        $request      = $this->createMock(ServerRequestInterface::class);
+        $invokedCount = self::exactly(2);
+        $request->expects($invokedCount)
             ->method('getAttribute')
             ->willReturnCallback(
-                static function (string $name, mixed $default = null) use ($matcher, $user, $routeResult): mixed {
-                    match ($matcher->numberOfInvocations()) {
+                static function (string $name, mixed $default = null) use ($invokedCount, $user, $routeResult): mixed {
+                    match ($invokedCount->numberOfInvocations()) {
                         1 => self::assertSame(UserInterface::class, $name),
                         default => self::assertSame(RouteResult::class, $name),
                     };
 
                     self::assertNull($default);
 
-                    return match ($matcher->numberOfInvocations()) {
+                    return match ($invokedCount->numberOfInvocations()) {
                         1 => $user,
                         default => $routeResult,
                     };
@@ -900,7 +893,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $authorization->expects(self::once())
             ->method('isGranted')
             ->with(null, $routeName, null, $request)
-            ->willReturn(false);
+            ->willReturn(value: false);
 
         $expectedResponse = $this->createMock(ResponseInterface::class);
 
@@ -921,7 +914,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($request instanceof ServerRequestInterface);
         assert($handler instanceof RequestHandlerInterface);
-        $response = $middleware->process($request, $handler);
+        $response = $authorizationMiddleware->process($request, $handler);
 
         self::assertSame($expectedResponse, $response);
     }
