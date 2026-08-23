@@ -199,7 +199,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(true);
+            ->willReturn(value: true);
         $routeResult->expects(self::never())
             ->method('getMatchedRouteName');
 
@@ -263,10 +263,10 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::once())
             ->method('getMatchedRouteName')
-            ->willReturn(false);
+            ->willReturn(value: false);
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
@@ -334,15 +334,19 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $request      = $this->createMock(ServerRequestInterface::class);
         $invokedCount = self::exactly(2);
@@ -397,7 +401,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $matcher = self::exactly(2);
         $routeResult->expects($matcher)
             ->method('getMatchedRouteName')
@@ -410,8 +414,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $request      = $this->createMock(ServerRequestInterface::class);
         $invokedCount = self::exactly(2);
@@ -466,15 +474,19 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $request      = $this->createMock(ServerRequestInterface::class);
         $invokedCount = self::exactly(2);
@@ -525,7 +537,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
@@ -591,8 +603,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
@@ -625,7 +641,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
@@ -664,8 +680,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
@@ -696,7 +716,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
@@ -735,8 +755,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
@@ -769,7 +793,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
@@ -824,7 +848,7 @@ final class AuthorizationMiddlewareTest extends TestCase
                 },
             );
 
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
@@ -834,8 +858,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::never())
@@ -864,7 +892,7 @@ final class AuthorizationMiddlewareTest extends TestCase
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->expects(self::once())
             ->method('isFailure')
-            ->willReturn(false);
+            ->willReturn(value: false);
         $routeResult->expects(self::exactly(2))
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
@@ -895,7 +923,7 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with(null, $routeName, null, $request)
             ->willReturn(value: false);
 
-        $expectedResponse = $this->createMock(ResponseInterface::class);
+        $expectedResponse = self::createStub(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory->expects(self::once())
@@ -905,8 +933,12 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         assert($authorization instanceof AuthorizationInterface);
         assert($responseFactory instanceof ResponseFactoryInterface);
-        $middleware = new AuthorizationMiddleware($authorization, $responseFactory, null);
-        self::assertInstanceOf(AuthorizationMiddleware::class, $middleware);
+        $authorizationMiddleware = new AuthorizationMiddleware(
+            $authorization,
+            $responseFactory,
+            defaultPrivilege: null,
+        );
+        self::assertInstanceOf(AuthorizationMiddleware::class, $authorizationMiddleware);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::never())
