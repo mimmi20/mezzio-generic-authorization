@@ -109,6 +109,8 @@ parameters:
 
   ignoreErrors:
     - '~will always evaluate to true~'
+    -
+      identifier: argument.named
 
   stubFiles:
     - stubs/psr/http-factory/ResponseFactoryInterface.stub

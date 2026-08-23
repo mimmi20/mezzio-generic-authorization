@@ -87,10 +87,14 @@ final readonly class AuthorizationMiddleware implements MiddlewareInterface
                     return $handler->handle($request);
                 }
             }
-        } else {
-            if ($this->authorization->isGranted(null, $routeName, $this->defaultPrivilege, $request)) {
-                return $handler->handle($request);
-            }
+        } elseif (
+            $this->authorization->isGranted(
+                resource: $routeName,
+                privilege: $this->defaultPrivilege,
+                request: $request,
+            )
+        ) {
+            return $handler->handle($request);
         }
 
         try {
