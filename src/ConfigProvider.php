@@ -18,7 +18,7 @@ final class ConfigProvider
     /**
      * Return the configuration array.
      *
-     * @return array<array<string, array<string, array<string>|string>>>
+     * @return array{dependencies: array{factories: array<class-string, class-string>}, authorization: array{roles?: array<string, array<string>>, resources?: array<string>, allow?: array<string, array<string>>, deny?: array<string, array<string>>}}
      *
      * @throws void
      */
@@ -33,7 +33,7 @@ final class ConfigProvider
     /**
      * Returns the configuration for the AuthorizationInterface adapter
      *
-     * @return array<string, array<string, array<string>>>
+     * @return array{roles?: array<string, array<string>>, resources?: array<string>, allow?: array<string, array<string>>, deny?: array<string, array<string>>}
      *
      * @throws void
      *
@@ -79,7 +79,7 @@ final class ConfigProvider
     /**
      * Returns the container dependencies
      *
-     * @return array<string, array<string, string>>
+     * @return array{factories: array<class-string, class-string>}
      *
      * @throws void
      *

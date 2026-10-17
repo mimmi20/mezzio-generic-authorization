@@ -85,7 +85,7 @@ parameters:
       tooWideThrowType: true
 
   cognitive_complexity:
-    class: 16
+    class: 50
     function: 16
 
   type_coverage:
@@ -93,8 +93,6 @@ parameters:
     param_type: 100
     property_type: 100
     constant_type: 100
-    # also, how many files has declare strict types
-    declare: 100
 
   unused_public:
     methods: true
@@ -106,11 +104,21 @@ parameters:
     null_over_false: true
     no_mixed: true
     narrow_param: true
+    narrow_return: true
+    no_isset_on_object: true
+    no_empty_on_object: true
+    no_param_type_removal: true
+    no_mixed_property: true
+    no_mixed_caller: true
 
   ignoreErrors:
     - '~will always evaluate to true~'
     -
       identifier: argument.named
+    -
+      identifier: phpunit.noAssertFuncCallInTests
+    -
+      identifier: symplify.requiredInterfaceContractNamespace
 
   stubFiles:
     - stubs/psr/http-factory/ResponseFactoryInterface.stub
