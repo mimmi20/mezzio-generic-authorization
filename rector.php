@@ -16,10 +16,7 @@ use Rector\DeadCode\Rector\If_\RemoveAlwaysTrueIfConditionRector;
 use Rector\DeadCode\Rector\If_\RemoveDeadInstanceOfRector;
 use Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector;
 use Rector\DeadCode\Rector\StmtsAwareInterface\RemoveDeadInstanceOfAssertRector;
-use Rector\Naming\Rector\Class_\RenamePropertyToMatchTypeRector;
-use Rector\Naming\Rector\ClassMethod\RenameParamToMatchTypeRector;
 use Rector\Php80\Rector\Class_\AnnotationToAttributeRector;
-use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use Rector\PHPUnit\CodeQuality\Rector\Class_\PreferPHPUnitThisCallRector;
 use Rector\PHPUnit\CodeQuality\Rector\Class_\YieldDataProviderRector;
 use Rector\PHPUnit\CodeQuality\Rector\ClassMethod\NoSetupWithParentCallOverrideRector;
@@ -37,7 +34,6 @@ return RectorConfig::configure()
         codeQuality: true,
         typeDeclarations: true,
         typeDeclarationDocblocks: true,
-        naming: true,
         namedArgs: true,
         instanceOf: true,
         if: true,
@@ -58,14 +54,7 @@ return RectorConfig::configure()
         PreferPHPUnitThisCallRector::class,
         AssertFuncCallToPHPUnitAssertRector::class,
         YieldDataProviderRector::class,
-        RenamePropertyToMatchTypeRector::class,
-        RenameParamToMatchTypeRector::class,
         NoSetupWithParentCallOverrideRector::class,
-    ])
-    ->withSkip([
-        ReadOnlyPropertyRector::class => [
-            __DIR__ . '/src/LaminasRbacFactory.php',
-        ],
     ])
     ->withoutParallel()
     ->withMemoryLimit('2048M');
